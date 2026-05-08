@@ -1,0 +1,26 @@
+<main class="shell">
+  <section class="hero" aria-labelledby="hero-title">
+    <p class="eyebrow">Angular 21 starter</p>
+    <h1 id="hero-title">{{ restaurantName() }}</h1>
+    <p class="intro">
+      A clean Angular application scaffold with a public assets area for fonts, images, data, and i18n files.
+    </p>
+    <div class="actions" aria-label="Primary actions">
+      <a class="button" href="mailto:hello@example.com">Contact us</a>
+      <a class="button button--ghost" href="/data/menu.json">View sample menu data</a>
+    </div>
+  </section>
+
+  <section class="structure" aria-labelledby="structure-title">
+    <h2 id="structure-title">Project structure</h2>
+    <ul>
+      <li><code>public/fonts</code> for font files.</li>
+      <li><code>public/images</code> for public image assets.</li>
+      <li><code>public/data</code> for static JSON or other data.</li>
+      <li><code>public/i18n</code> for translation files.</li>
+      <li><code>src</code> for Angular application source code.</li>
+    </ul>
+  </section>
+</main>
+
+<router-outlet />
