@@ -5,8 +5,8 @@ import { authGuard, roleGuard } from './core/auth/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
-    title: 'Food Restorant',
+    pathMatch: 'full',
+    redirectTo: 'login',
   },
   {
     path: 'login',
@@ -50,7 +50,13 @@ export const routes: Routes = [
     title: 'Cashier | Food Restorant',
   },
   {
+    path: 'settings',
+    canActivate: [authGuard, roleGuard(['customer', 'admin', 'cook', 'staff', 'cashier'])],
+    loadComponent: () => import('./pages/settings/settings.component').then((m) => m.SettingsComponent),
+    title: 'Settings | Food Restorant',
+  },
+  {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'login',
   },
 ];

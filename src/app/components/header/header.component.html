@@ -1,38 +1,21 @@
 <header class="site-header">
-  <a class="brand" routerLink="/" aria-label="Food Restorant home">
+  <button class="icon-button" type="button" aria-label="Toggle drawer navigation" (click)="layout.toggleDrawer()">
+    ☰
+  </button>
+
+  <div class="brand" aria-label="Food Restorant dashboard">
     <span class="brand__mark">FR</span>
     <span>
       <strong>Food Restorant</strong>
-      <small>Seasonal dining</small>
+      <small>{{ auth.user()?.role }} dashboard</small>
     </span>
-  </a>
-
-  <nav class="nav" aria-label="Primary navigation">
-    <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-    @if (auth.isAuthenticated()) {
-      <a routerLink="/dashboard" routerLinkActive="is-active">Dashboard</a>
-    }
-    @if (auth.role() === 'admin') {
-      <a routerLink="/admin" routerLinkActive="is-active">Admin</a>
-    }
-    @if (auth.role() === 'cook') {
-      <a routerLink="/kitchen" routerLinkActive="is-active">Kitchen</a>
-    }
-    @if (auth.role() === 'cashier') {
-      <a routerLink="/cashier" routerLinkActive="is-active">Cashier</a>
-    }
-  </nav>
+  </div>
 
   <div class="header-actions">
-    <app-button variant="ghost" (click)="theme.toggle()">
-      {{ theme.isDark() ? 'Light' : 'Dark' }} mode
-    </app-button>
-
-    @if (auth.isAuthenticated()) {
-      <span class="user-pill">{{ auth.user()?.role }}</span>
-      <app-button variant="secondary" (click)="auth.logout()">Logout</app-button>
-    } @else {
-      <a class="login-link" routerLink="/login">Login</a>
-    }
+    <button class="icon-button" type="button" aria-label="Toggle light or dark mode" (click)="theme.toggle()">
+      {{ theme.isDark() ? '☀' : '☾' }}
+    </button>
+    <span class="user-pill">{{ auth.user()?.role }}</span>
+    <app-button variant="secondary" (click)="auth.logout()">Logout</app-button>
   </div>
 </header>

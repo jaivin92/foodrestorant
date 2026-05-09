@@ -40,4 +40,11 @@ export const drawerNavigationItems: readonly NavigationItem[] = [
     roles: ['admin', 'cashier'],
     badge: 'POS',
   },
+
+  {
+    label: 'Settings',
+    route: '/settings',
+    description: 'Basic user detail and password change',
+    roles: ['admin', 'cook', 'staff', 'cashier', 'customer'],
+  },
 ];

@@ -5,6 +5,7 @@ import { DrawerComponent } from './components/drawer/drawer.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { AuthService } from './core/auth/auth.service';
+import { LayoutService } from './core/layout/layout.service';
 
 @Component({
   selector: 'app-root',
@@ -14,4 +15,5 @@ import { AuthService } from './core/auth/auth.service';
 })
 export class App {
   readonly auth = inject(AuthService);
+  readonly layout = inject(LayoutService);
 }

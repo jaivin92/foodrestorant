@@ -1,14 +1,14 @@
-<app-header />
 @if (auth.isAuthenticated()) {
-  <div class="app-layout">
+  <app-header />
+  <div class="app-layout" [class.app-layout--drawer-closed]="!layout.drawerOpen()">
     <app-drawer />
     <main class="app-shell app-shell--with-drawer">
       <router-outlet />
     </main>
   </div>
+  <app-footer />
 } @else {
-  <main class="app-shell">
+  <main class="auth-shell">
     <router-outlet />
   </main>
 }
-<app-footer />
