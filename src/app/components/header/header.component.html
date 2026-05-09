@@ -1,0 +1,32 @@
+<header class="site-header">
+  <a class="brand" routerLink="/" aria-label="Food Restorant home">
+    <span class="brand__mark">FR</span>
+    <span>
+      <strong>Food Restorant</strong>
+      <small>Seasonal dining</small>
+    </span>
+  </a>
+
+  <nav class="nav" aria-label="Primary navigation">
+    <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    @if (auth.isAuthenticated()) {
+      <a routerLink="/dashboard" routerLinkActive="is-active">Dashboard</a>
+    }
+    @if (auth.role() === 'admin') {
+      <a routerLink="/admin" routerLinkActive="is-active">Admin</a>
+    }
+  </nav>
+
+  <div class="header-actions">
+    <app-button variant="ghost" (click)="theme.toggle()">
+      {{ theme.isDark() ? 'Light' : 'Dark' }} mode
+    </app-button>
+
+    @if (auth.isAuthenticated()) {
+      <span class="user-pill">{{ auth.user()?.role }}</span>
+      <app-button variant="secondary" (click)="auth.logout()">Logout</app-button>
+    } @else {
+      <a class="login-link" routerLink="/login">Login</a>
+    }
+  </div>
+</header>

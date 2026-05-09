@@ -1,0 +1,15 @@
+<section class="page-heading">
+  <p class="eyebrow">Customer dashboard</p>
+  <h1>Welcome, {{ auth.user()?.name }}</h1>
+  <p>Manage reservations, review favorites, and keep dining preferences close at hand.</p>
+</section>
+
+<section class="dashboard-grid">
+  @for (reservation of reservations; track reservation.time) {
+    <app-card>
+      <p class="meta">{{ reservation.status }}</p>
+      <h2>{{ reservation.time }}</h2>
+      <p>{{ reservation.table }}</p>
+    </app-card>
+  }
+</section>

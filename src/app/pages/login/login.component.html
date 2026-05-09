@@ -1,0 +1,26 @@
+<section class="login-page">
+  <app-card>
+    <p class="eyebrow">Secure entry</p>
+    <h1>Login to continue</h1>
+    <p class="intro">Choose a role to preview customer or admin access. The guard setup will route users to the correct area.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <app-input id="email" label="Email" type="email" autocomplete="email" formControlName="email" />
+      <app-input id="password" label="Password" type="password" autocomplete="current-password" formControlName="password" />
+
+      <fieldset>
+        <legend>Role</legend>
+        <label>
+          <input type="radio" value="customer" formControlName="role" />
+          Customer
+        </label>
+        <label>
+          <input type="radio" value="admin" formControlName="role" />
+          Admin
+        </label>
+      </fieldset>
+
+      <app-button type="submit" [disabled]="form.invalid">Login</app-button>
+    </form>
+  </app-card>
+</section>
