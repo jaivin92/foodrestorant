@@ -4,9 +4,31 @@
 }
 
 .app-layout {
+  display: grid;
+  grid-template-columns: 0 minmax(0, 1fr);
+  gap: 0;
   width: min(1320px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 1.5rem 0 0;
+  transition: grid-template-columns 220ms ease, gap 220ms ease;
+}
+
+.app-layout--drawer-open {
+  grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.app-layout app-drawer {
+  min-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.app-layout--drawer-open app-drawer {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .app-shell {
@@ -19,26 +41,17 @@
   width: 100%;
 }
 
-.app-layout app-drawer {
-  position: fixed;
-  z-index: 30;
-  top: 5.5rem;
-  right: clamp(1rem, 4vw, 3rem);
-  width: min(22rem, calc(100vw - 2rem));
-  max-height: calc(100vh - 7rem);
-  overflow-y: auto;
-  transform: translateX(calc(100% + clamp(1rem, 4vw, 3rem)));
-  transition: transform 220ms ease, visibility 220ms ease;
-  visibility: hidden;
-}
+@media (max-width: 860px) {
+  .app-layout,
+  .app-layout--drawer-open {
+    grid-template-columns: 1fr;
+  }
 
-.app-layout--drawer-open app-drawer {
-  transform: translateX(0);
-  visibility: visible;
-}
-
-@media (max-width: 680px) {
   .app-layout app-drawer {
-    top: 8.5rem;
+    display: none;
+  }
+
+  .app-layout--drawer-open app-drawer {
+    display: block;
   }
 }
