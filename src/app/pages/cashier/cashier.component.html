@@ -1,0 +1,16 @@
+<section class="page-heading">
+  <p class="eyebrow">Cashier</p>
+  <h1>Billing queue</h1>
+  <p>Cashier and manager roles can open bills, collect payments, and settle table orders.</p>
+</section>
+
+<section class="bill-grid">
+  @for (bill of bills; track bill.order) {
+    <app-card>
+      <p class="meta">{{ bill.status }}</p>
+      <h2>{{ bill.table }} • {{ bill.order }}</h2>
+      <strong>{{ bill.amount }}</strong>
+      <app-button variant="secondary">Settle bill</app-button>
+    </app-card>
+  }
+</section>

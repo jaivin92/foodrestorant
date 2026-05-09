@@ -1,0 +1,20 @@
+<section class="login-page">
+  <app-card>
+    <p class="eyebrow">Secure entry</p>
+    <h1>Login to continue</h1>
+    <p class="intro">Sign in with your restaurant account. The API response UserType decides which dashboard and drawer menus open next.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <app-input id="email" label="Email" type="email" autocomplete="email" formControlName="email" />
+      <app-input id="password" label="Password" type="password" autocomplete="current-password" formControlName="password" />
+
+      @if (loginError()) {
+        <p class="error">{{ loginError() }}</p>
+      }
+
+      <app-button type="submit" [disabled]="form.invalid || isSubmitting()">
+        {{ isSubmitting() ? 'Logging in...' : 'Login' }}
+      </app-button>
+    </form>
+  </app-card>
+</section>

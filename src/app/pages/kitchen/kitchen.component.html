@@ -1,0 +1,16 @@
+<section class="page-heading">
+  <p class="eyebrow">Kitchen staff</p>
+  <h1>Kitchen queue</h1>
+  <p>Kitchen and manager users can open this drawer item to track order preparation by table.</p>
+</section>
+
+<section class="queue-grid">
+  @for (item of queue; track item.order) {
+    <app-card>
+      <p class="meta">{{ item.status }}</p>
+      <h2>{{ item.order }} • {{ item.table }}</h2>
+      <p>{{ item.station }}</p>
+      <strong>{{ item.eta }}</strong>
+    </app-card>
+  }
+</section>

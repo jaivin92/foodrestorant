@@ -1,0 +1,29 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__content">
+    <p class="eyebrow">Fresh • Cozy • Seasonal</p>
+    <h1 id="hero-title">Restaurant experiences with a warm new theme.</h1>
+    <p class="intro">
+      A refreshed Angular foundation for Food Restorant with reusable design components,
+      theme switching, and secure role-based entry points.
+    </p>
+    <div class="actions">
+      <a class="cta" routerLink="/login">Start with login</a>
+      <a class="cta cta--ghost" href="/data/menu.json">View menu data</a>
+    </div>
+  </div>
+  <app-card>
+    <p class="menu-label">Chef suggestion</p>
+    <h2>Roasted garden plate</h2>
+    <p>Herbed grains, citrus greens, and toasted root vegetables finished with house dressing.</p>
+    <strong>$18</strong>
+  </app-card>
+</section>
+
+<section class="feature-grid" aria-label="Application features">
+  @for (feature of features; track feature.title) {
+    <app-card>
+      <h2>{{ feature.title }}</h2>
+      <p>{{ feature.text }}</p>
+    </app-card>
+  }
+</section>
