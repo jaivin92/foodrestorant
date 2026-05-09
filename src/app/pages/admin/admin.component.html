@@ -1,0 +1,15 @@
+<section class="page-heading">
+  <p class="eyebrow">Admin only</p>
+  <h1>Operations overview</h1>
+  <p>This route is protected by the admin role guard and can be used as the starting point for back-office tools.</p>
+</section>
+
+<section class="metric-grid">
+  @for (metric of metrics; track metric.label) {
+    <app-card>
+      <p class="metric-label">{{ metric.label }}</p>
+      <strong>{{ metric.value }}</strong>
+      <p>{{ metric.detail }}</p>
+    </app-card>
+  }
+</section>

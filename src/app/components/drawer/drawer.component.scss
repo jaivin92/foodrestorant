@@ -1,0 +1,76 @@
+.drawer {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 1.5rem;
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-card);
+  padding: 1rem;
+}
+
+.drawer__profile {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.avatar {
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 1rem;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-weight: 950;
+}
+
+.drawer__profile strong,
+.drawer__profile small,
+.drawer__nav strong,
+.drawer__nav small {
+  display: block;
+}
+
+.drawer__profile small,
+.drawer__nav small {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.drawer__nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.drawer__nav a {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  color: var(--color-text);
+  padding: 0.85rem;
+  text-decoration: none;
+}
+
+.drawer__nav a:hover,
+.drawer__nav a.is-active {
+  border-color: var(--color-border);
+  background: var(--color-accent-soft);
+}
+
+.drawer__nav em {
+  align-self: start;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 950;
+  padding: 0.2rem 0.45rem;
+}

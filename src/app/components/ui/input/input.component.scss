@@ -1,0 +1,32 @@
+.field {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+.field span {
+  font-size: 0.9rem;
+}
+
+.field input {
+  width: 100%;
+  min-height: 3.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  outline: none;
+  padding: 0 1rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.field input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-focus-ring);
+}
+
+.field input::placeholder {
+  color: var(--color-muted);
+}

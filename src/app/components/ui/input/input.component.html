@@ -1,0 +1,13 @@
+<label class="field" [for]="id()">
+  <span>{{ label() }}</span>
+  <input
+    [id]="id()"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [autocomplete]="autocomplete()"
+    [value]="value"
+    [disabled]="disabled"
+    (input)="updateValue($event)"
+    (blur)="markTouched()"
+  />
+</label>

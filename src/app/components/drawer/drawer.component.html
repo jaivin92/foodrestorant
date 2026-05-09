@@ -1,0 +1,23 @@
+<aside class="drawer" aria-label="Role based application menu">
+  <div class="drawer__profile">
+    <span class="avatar">{{ auth.user()?.name?.slice(0, 1) ?? 'U' }}</span>
+    <div>
+      <strong>{{ auth.user()?.name }}</strong>
+      <small>{{ auth.role() }} access</small>
+    </div>
+  </div>
+
+  <nav class="drawer__nav" aria-label="Authenticated navigation">
+    @for (item of navigation.drawerItems(); track item.route) {
+      <a [routerLink]="item.route" routerLinkActive="is-active">
+        <span>
+          <strong>{{ item.label }}</strong>
+          <small>{{ item.description }}</small>
+        </span>
+        @if (item.badge) {
+          <em>{{ item.badge }}</em>
+        }
+      </a>
+    }
+  </nav>
+</aside>

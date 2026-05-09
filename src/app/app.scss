@@ -1,104 +1,44 @@
-.shell {
-  display: grid;
-  gap: 2rem;
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-layout {
+  width: min(1320px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.5rem 0 0;
+}
+
+.app-shell {
   width: min(1120px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 5rem 0;
 }
 
-.hero,
-.structure {
-  border: 1px solid rgb(111 58 23 / 14%);
-  border-radius: 2rem;
-  background: rgb(255 255 255 / 78%);
-  box-shadow: 0 24px 80px rgb(111 58 23 / 12%);
+.app-shell--with-drawer,
+.auth-shell {
+  width: 100%;
 }
 
-.hero {
-  display: grid;
-  gap: 1.5rem;
-  min-height: 60vh;
-  align-content: center;
-  padding: clamp(2rem, 6vw, 5rem);
-  background:
-    radial-gradient(circle at top right, rgb(255 169 77 / 35%), transparent 35%),
-    linear-gradient(135deg, #fffdf8, #fff0da);
+.app-layout app-drawer {
+  position: fixed;
+  z-index: 30;
+  top: 5.5rem;
+  right: clamp(1rem, 4vw, 3rem);
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  transform: translateX(calc(100% + clamp(1rem, 4vw, 3rem)));
+  transition: transform 220ms ease, visibility 220ms ease;
+  visibility: hidden;
 }
 
-.eyebrow {
-  margin: 0;
-  color: #b45412;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.app-layout--drawer-open app-drawer {
+  transform: translateX(0);
+  visibility: visible;
 }
 
-h1,
-h2,
-p {
-  margin: 0;
-}
-
-h1 {
-  max-width: 11ch;
-  font-size: clamp(3rem, 11vw, 7.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.08em;
-}
-
-.intro {
-  max-width: 60ch;
-  color: #62412a;
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
-  line-height: 1.7;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3rem;
-  padding: 0 1.25rem;
-  border: 1px solid #d76f1f;
-  border-radius: 999px;
-  background: #d76f1f;
-  color: #ffffff;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.button--ghost {
-  background: transparent;
-  color: #9a470f;
-}
-
-.structure {
-  padding: clamp(1.5rem, 4vw, 3rem);
-}
-
-.structure h2 {
-  margin-bottom: 1rem;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-}
-
-.structure ul {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-  padding-left: 1.25rem;
-  color: #62412a;
-  line-height: 1.6;
-}
-
-code {
-  border-radius: 0.35rem;
-  background: #fff0da;
-  color: #8b3b08;
-  padding: 0.1rem 0.35rem;
+@media (max-width: 680px) {
+  .app-layout app-drawer {
+    top: 8.5rem;
+  }
 }

@@ -1,0 +1,21 @@
+<header class="site-header">
+  <div class="brand" aria-label="Food Restorant dashboard">
+    <span class="brand__mark">FR</span>
+    <span>
+      <strong>Food Restorant</strong>
+      <small>{{ auth.user()?.role }} dashboard</small>
+    </span>
+  </div>
+
+  <button class="icon-button nav-toggle" type="button" aria-label="Toggle drawer navigation" (click)="layout.toggleDrawer()">
+    ☰
+  </button>
+
+  <div class="header-actions">
+    <button class="icon-button" type="button" aria-label="Toggle light or dark mode" (click)="theme.toggle()">
+      {{ theme.isDark() ? '☀' : '☾' }}
+    </button>
+    <span class="user-pill">{{ auth.user()?.role }}</span>
+    <app-button variant="secondary" (click)="auth.logout()">Logout</app-button>
+  </div>
+</header>
