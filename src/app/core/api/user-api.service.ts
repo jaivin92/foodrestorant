@@ -1,11 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 
 import { BmsApiService } from './bms-api.service';
-import { DataTableRequestModel, UserModel } from '../../models/bms.models';
+import { DataTableRequest, LoginRequestModel, UserModel } from '../../models/bms.models';
 
 @Injectable({ providedIn: 'root' })
 export class UserApiService {
   private readonly api = inject(BmsApiService);
+
+  login(model: LoginRequestModel) {
+    return this.api.postAction<LoginRequestModel, UserModel>('User', 'Login', model);
+  }
 
   insert(model: UserModel) {
     return this.api.insert('User', model);
@@ -19,11 +23,11 @@ export class UserApiService {
     return this.api.getById('User', id);
   }
 
-  getAll(request: DataTableRequestModel = {}) {
+  getAll(request: DataTableRequest = new DataTableRequest()) {
     return this.api.getAll('User', request);
   }
 
-  getSingle(request: DataTableRequestModel = {}) {
+  getSingle(request: DataTableRequest = new DataTableRequest()) {
     return this.api.getSingle('User', request);
   }
 }

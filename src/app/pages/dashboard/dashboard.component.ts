@@ -26,9 +26,9 @@ export class DashboardComponent {
   ];
 
   readonly operations: readonly { label: string; value: number; roles: readonly AuthRole[] }[] = [
-    { label: 'Open orders', value: 17, roles: ['admin', 'staff', 'cook', 'cashier'] },
-    { label: 'Kitchen ready', value: 5, roles: ['admin', 'cook', 'staff'] },
-    { label: 'Bills pending', value: 4, roles: ['admin', 'cashier'] },
+    { label: 'Open orders', value: 17, roles: ['super_admin', 'restaurant_admin', 'manager', 'waiter', 'kitchen', 'cashier'] },
+    { label: 'Kitchen ready', value: 5, roles: ['super_admin', 'restaurant_admin', 'manager', 'kitchen'] },
+    { label: 'Bills pending', value: 4, roles: ['super_admin', 'restaurant_admin', 'manager', 'cashier'] },
     { label: 'My reservations', value: 2, roles: ['customer'] },
   ];
 

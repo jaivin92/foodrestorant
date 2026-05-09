@@ -7,7 +7,8 @@ import {
   ApiResponse,
   BmsEntityMap,
   BmsEntityName,
-  DataTableRequestModel,
+  DataTableRequest,
+  DataTableResponse,
 } from '../../models/bms.models';
 
 @Injectable({ providedIn: 'root' })
@@ -29,18 +30,20 @@ export class BmsApiService {
 
   getAll<TEntity extends BmsEntityName>(
     entity: TEntity,
-    request: DataTableRequestModel = {},
-  ): Observable<ApiResponse<BmsEntityMap[TEntity][]>> {
-    return this.http.request<ApiResponse<BmsEntityMap[TEntity][]>>('GET', this.url(entity, 'GetAll'), {
-      body: request,
-    });
+    request: DataTableRequest = new DataTableRequest(),
+  ): Observable<ApiResponse<DataTableResponse<BmsEntityMap[TEntity]>>> {
+    return this.http.post<ApiResponse<DataTableResponse<BmsEntityMap[TEntity]>>>(this.url(entity, 'GetAll'), request);
   }
 
   getSingle<TEntity extends BmsEntityName>(
     entity: TEntity,
-    request: DataTableRequestModel = {},
+    request: DataTableRequest = new DataTableRequest(),
   ): Observable<ApiResponse<BmsEntityMap[TEntity]>> {
     return this.http.post<ApiResponse<BmsEntityMap[TEntity]>>(this.url(entity, 'GetSingle'), request);
+  }
+
+  postAction<TRequest, TResponse>(entity: BmsEntityName, action: string, request: TRequest): Observable<ApiResponse<TResponse>> {
+    return this.http.post<ApiResponse<TResponse>>(this.url(entity, action), request);
   }
 
   private url(entity: BmsEntityName, action: string): string {

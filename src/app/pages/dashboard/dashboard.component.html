@@ -22,7 +22,7 @@
   }
 </section>
 
-@if (auth.role() === 'admin' || auth.role() === 'staff') {
+@if (auth.role() === 'super_admin' || auth.role() === 'restaurant_admin' || auth.role() === 'manager' || auth.role() === 'waiter') {
   <section class="dashboard-grid" aria-label="Table status overview">
     @for (status of tableStatus; track status.label) {
       <app-card>

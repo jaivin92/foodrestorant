@@ -1,36 +1,46 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, map, tap } from 'rxjs';
 
+import { UserApiService } from '../api/user-api.service';
+import { UserModel, UserTypes } from '../../models/bms.models';
 import { AuthRole, AuthUser, LoginCredentials, LoginRole } from './auth.models';
 
 const STORAGE_KEY = 'foodrestorant.auth.user';
 
-const roleDisplayNames: Record<LoginRole, string> = {
-  admin: 'Restaurant Admin',
-  cook: 'Kitchen Cook',
-  staff: 'Floor Staff',
-  cashier: 'Cashier Desk',
-  customer: 'Hungry Guest',
+const roleByUserType: Record<UserTypes, LoginRole> = {
+  [UserTypes.SUPER_ADMIN]: 'super_admin',
+  [UserTypes.RESTAURANT_ADMIN]: 'restaurant_admin',
+  [UserTypes.MANAGER]: 'manager',
+  [UserTypes.WAITER]: 'waiter',
+  [UserTypes.KITCHEN]: 'kitchen',
+  [UserTypes.CASHIER]: 'cashier',
+  [UserTypes.CUSTOMER]: 'customer',
 };
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly router = inject(Router);
+  private readonly userApi = inject(UserApiService);
   private readonly userSignal = signal<AuthUser | null>(this.loadStoredUser());
 
   readonly user = this.userSignal.asReadonly();
   readonly isAuthenticated = computed(() => this.userSignal() !== null);
   readonly role = computed<AuthRole>(() => this.userSignal()?.role ?? 'guest');
 
-  login(credentials: LoginCredentials): void {
-    const user: AuthUser = {
-      name: roleDisplayNames[credentials.role],
-      email: credentials.email,
-      role: credentials.role,
-    };
+  login(credentials: LoginCredentials): Observable<AuthUser> {
+    return this.userApi
+      .login({ Email: credentials.email, Password: credentials.password })
+      .pipe(
+        map((response) => {
+          if (!response.Status) {
+            throw new Error(response.Message || 'Login failed.');
+          }
 
-    this.userSignal.set(user);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+          return this.toAuthUser(response.Data);
+        }),
+        tap((user) => this.setUser(user)),
+      );
   }
 
   logout(): void {
@@ -41,6 +51,22 @@ export class AuthService {
 
   hasAnyRole(roles: readonly AuthRole[]): boolean {
     return roles.includes(this.role());
+  }
+
+  private setUser(user: AuthUser): void {
+    this.userSignal.set(user);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+  }
+
+  private toAuthUser(user: UserModel): AuthUser {
+    return {
+      id: user.Id,
+      name: user.Name,
+      email: user.Email ?? '',
+      mobile: user.Mobile,
+      userType: user.UserType,
+      role: roleByUserType[user.UserType],
+    };
   }
 
   private loadStoredUser(): AuthUser | null {

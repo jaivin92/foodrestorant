@@ -1,3 +1,13 @@
+export enum UserTypes {
+  SUPER_ADMIN = 1,
+  RESTAURANT_ADMIN = 2,
+  MANAGER = 3,
+  WAITER = 4,
+  KITCHEN = 5,
+  CASHIER = 6,
+  CUSTOMER = 7,
+}
+
 export type OrderStatus = 'Pending' | 'Accepted' | 'Preparing' | 'Ready' | 'Served' | 'Completed' | 'Cancelled';
 export type OrderType = 'DineIn' | 'TakeAway' | 'Delivery';
 export type FoodTableType = 'Available' | 'Reserved' | 'Occupied' | 'Cleaning';
@@ -15,26 +25,36 @@ export const orderStatusValues: readonly OrderStatus[] = [
 export const orderTypeValues: readonly OrderType[] = ['DineIn', 'TakeAway', 'Delivery'];
 export const foodTableTypeValues: readonly FoodTableType[] = ['Available', 'Reserved', 'Occupied', 'Cleaning'];
 
+export class DataTableRequest {
+  limit = 50;
+  count!: number;
+  offset = 0;
+  orderBy!: string;
+  orderDir = 'desc';
+  pageSize = 10;
+  filter!: string;
+  pageLimits: number[] = [10, 20, 30, 40, 50];
+  filterObj: Record<string, unknown> = { IsActive: true };
+  methodName!: string;
+
+  constructor(init?: Partial<DataTableRequest>) {
+    Object.assign(this, init);
+  }
+
+  reset(): void {
+    this.offset = 0;
+  }
+}
+
+export type DataTableRequestModel = DataTableRequest;
+
 export interface BaseModel {
   Id: number;
   IsActive: boolean;
   TotalRecord?: number;
   fIds?: number[];
   FreeTextSearch?: string;
-  DataTableRequestModel?: DataTableRequestModel;
-}
-
-export interface DataTableRequestModel {
-  PageSize?: number;
-  Limit?: number;
-  Offset?: number;
-  OrderDir?: 'ASC' | 'DESC' | string;
-  OrderBy?: string;
-  Filter?: string;
-  FilterObj?: Record<string, unknown>;
-  IsShowNoData?: boolean;
-  ResponseForDataTable?: boolean;
-  GetSetCache?: boolean;
+  DataTableRequestModel?: DataTableRequest;
 }
 
 export interface FoodCategoryModel extends BaseModel {
@@ -72,9 +92,15 @@ export interface OrderItemModel extends BaseModel {
 }
 
 export interface UserModel extends BaseModel {
+  UserType: UserTypes;
   Name: string;
   Email?: string | null;
   Mobile: string;
+  Password: string;
+}
+
+export interface LoginRequestModel {
+  Email: string;
   Password: string;
 }
 
@@ -89,13 +115,16 @@ export interface ApiError {
   Status: false;
   ErrorType?: number | string;
   Message: string;
+  Data?: unknown;
+  DataVersion?: string;
 }
 
 export type ApiResponse<T> = ApiSuccess<T> | ApiError;
 
 export interface DataTableResponse<T> {
   Data: T[];
-  TotalRecord?: number;
+  TotalRecord: number;
+  DynamicGrid?: boolean;
 }
 
 export interface WeatherForecastModel {

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 
 import { BmsApiService } from './bms-api.service';
-import { DataTableRequestModel, FoodCategoryModel } from '../../models/bms.models';
+import { DataTableRequest, FoodCategoryModel } from '../../models/bms.models';
 
 @Injectable({ providedIn: 'root' })
 export class FoodCategoryApiService {
@@ -19,11 +19,11 @@ export class FoodCategoryApiService {
     return this.api.getById('FoodCategory', id);
   }
 
-  getAll(request: DataTableRequestModel = {}) {
+  getAll(request: DataTableRequest = new DataTableRequest()) {
     return this.api.getAll('FoodCategory', request);
   }
 
-  getSingle(request: DataTableRequestModel = {}) {
+  getSingle(request: DataTableRequest = new DataTableRequest()) {
     return this.api.getSingle('FoodCategory', request);
   }
 }
