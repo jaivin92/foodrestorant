@@ -1,9 +1,17 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthRole, AuthUser, LoginCredentials } from './auth.models';
+import { AuthRole, AuthUser, LoginCredentials, LoginRole } from './auth.models';
 
 const STORAGE_KEY = 'foodrestorant.auth.user';
+
+const roleDisplayNames: Record<LoginRole, string> = {
+  admin: 'Restaurant Admin',
+  cook: 'Kitchen Cook',
+  staff: 'Floor Staff',
+  cashier: 'Cashier Desk',
+  customer: 'Hungry Guest',
+};
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,7 +24,7 @@ export class AuthService {
 
   login(credentials: LoginCredentials): void {
     const user: AuthUser = {
-      name: credentials.role === 'admin' ? 'Restaurant Admin' : 'Hungry Guest',
+      name: roleDisplayNames[credentials.role],
       email: credentials.email,
       role: credentials.role,
     };

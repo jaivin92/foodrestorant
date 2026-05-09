@@ -3,7 +3,26 @@
   min-height: 100vh;
 }
 
+.app-layout {
+  display: grid;
+  grid-template-columns: 18rem minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  width: min(1320px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.5rem 0 0;
+}
+
 .app-shell {
   width: min(1120px, calc(100% - 2rem));
   margin: 0 auto;
+}
+
+.app-shell--with-drawer {
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
 }

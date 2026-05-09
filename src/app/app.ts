@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { DrawerComponent } from './components/drawer/drawer.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
+import { AuthService } from './core/auth/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [FooterComponent, HeaderComponent, RouterOutlet],
+  imports: [DrawerComponent, FooterComponent, HeaderComponent, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  readonly auth = inject(AuthService);
+}

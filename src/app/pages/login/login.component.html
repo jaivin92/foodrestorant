@@ -2,7 +2,7 @@
   <app-card>
     <p class="eyebrow">Secure entry</p>
     <h1>Login to continue</h1>
-    <p class="intro">Choose a role to preview customer or admin access. The guard setup will route users to the correct area.</p>
+    <p class="intro">Choose a role to preview the matching drawer menu, dashboard modules, and protected restaurant workflow.</p>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <app-input id="email" label="Email" type="email" autocomplete="email" formControlName="email" />
@@ -10,14 +10,12 @@
 
       <fieldset>
         <legend>Role</legend>
-        <label>
-          <input type="radio" value="customer" formControlName="role" />
-          Customer
-        </label>
-        <label>
-          <input type="radio" value="admin" formControlName="role" />
-          Admin
-        </label>
+        @for (role of roles; track role.value) {
+          <label>
+            <input type="radio" [value]="role.value" formControlName="role" />
+            {{ role.label }}
+          </label>
+        }
       </fieldset>
 
       <app-button type="submit" [disabled]="form.invalid">Login</app-button>

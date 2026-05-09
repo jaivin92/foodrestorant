@@ -1,15 +1,45 @@
 <section class="page-heading">
-  <p class="eyebrow">Customer dashboard</p>
+  <p class="eyebrow">{{ auth.role() }} dashboard</p>
   <h1>Welcome, {{ auth.user()?.name }}</h1>
-  <p>Manage reservations, review favorites, and keep dining preferences close at hand.</p>
+  <p>Open the tools available for your role from the drawer or use these dashboard quick actions.</p>
 </section>
 
-<section class="dashboard-grid">
-  @for (reservation of reservations; track reservation.time) {
+<section class="quick-grid" aria-label="Role quick actions">
+  @for (item of quickActions(); track item.route) {
+    <a [routerLink]="item.route">
+      <app-card>
+        <p class="meta">Open</p>
+        <h2>{{ item.label }}</h2>
+        <p>{{ item.description }}</p>
+      </app-card>
+    </a>
+  } @empty {
     <app-card>
-      <p class="meta">{{ reservation.status }}</p>
-      <h2>{{ reservation.time }}</h2>
-      <p>{{ reservation.table }}</p>
+      <p class="meta">Customer</p>
+      <h2>Reservation tools</h2>
+      <p>Customer booking features can be added here when the reservation API is ready.</p>
+    </app-card>
+  }
+</section>
+
+@if (auth.role() === 'admin' || auth.role() === 'staff') {
+  <section class="dashboard-grid" aria-label="Table status overview">
+    @for (status of tableStatus; track status.label) {
+      <app-card>
+        <p class="meta">Table status</p>
+        <h2>{{ status.label }}</h2>
+        <strong>{{ status.value }}</strong>
+      </app-card>
+    }
+  </section>
+}
+
+<section class="dashboard-grid" aria-label="Role operation metrics">
+  @for (operation of visibleOperations(); track operation.label) {
+    <app-card>
+      <p class="meta">Today</p>
+      <h2>{{ operation.label }}</h2>
+      <strong>{{ operation.value }}</strong>
     </app-card>
   }
 </section>

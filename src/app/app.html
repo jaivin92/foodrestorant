@@ -1,5 +1,14 @@
 <app-header />
-<main class="app-shell">
-  <router-outlet />
-</main>
+@if (auth.isAuthenticated()) {
+  <div class="app-layout">
+    <app-drawer />
+    <main class="app-shell app-shell--with-drawer">
+      <router-outlet />
+    </main>
+  </div>
+} @else {
+  <main class="app-shell">
+    <router-outlet />
+  </main>
+}
 <app-footer />

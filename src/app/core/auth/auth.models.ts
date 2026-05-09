@@ -1,4 +1,5 @@
-export type AuthRole = 'guest' | 'customer' | 'admin';
+export type AuthRole = 'guest' | 'customer' | 'admin' | 'cook' | 'staff' | 'cashier';
+export type LoginRole = Exclude<AuthRole, 'guest'>;
 
 export interface AuthUser {
   readonly name: string;
@@ -9,5 +10,5 @@ export interface AuthUser {
 export interface LoginCredentials {
   readonly email: string;
   readonly password: string;
-  readonly role: Exclude<AuthRole, 'guest'>;
+  readonly role: LoginRole;
 }

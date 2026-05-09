@@ -15,6 +15,12 @@
     @if (auth.role() === 'admin') {
       <a routerLink="/admin" routerLinkActive="is-active">Admin</a>
     }
+    @if (auth.role() === 'cook') {
+      <a routerLink="/kitchen" routerLinkActive="is-active">Kitchen</a>
+    }
+    @if (auth.role() === 'cashier') {
+      <a routerLink="/cashier" routerLinkActive="is-active">Cashier</a>
+    }
   </nav>
 
   <div class="header-actions">

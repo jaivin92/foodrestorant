@@ -1,0 +1,20 @@
+<section class="page-heading">
+  <p class="eyebrow">Order desk</p>
+  <h1>Table-wise order create</h1>
+  <p>Create orders by table, follow kitchen status, and hand completed bills to cashier.</p>
+  <app-button>Create table order</app-button>
+</section>
+
+<section class="order-grid">
+  @for (order of tableOrders; track order.order) {
+    <app-card>
+      <p class="meta">{{ order.status }}</p>
+      <h2>{{ order.table }} • {{ order.order }}</h2>
+      <ul>
+        @for (item of order.items; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </app-card>
+  }
+</section>

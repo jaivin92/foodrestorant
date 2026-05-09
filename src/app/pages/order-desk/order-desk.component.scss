@@ -1,5 +1,6 @@
 .page-heading {
   display: grid;
+  justify-items: start;
   gap: 0.8rem;
   padding: 2.5rem 0 2rem;
 }
@@ -25,39 +26,22 @@ h1 {
   line-height: 0.95;
 }
 
-.page-heading p:not(.eyebrow),
-app-card p:not(.meta) {
+.page-heading p:not(.eyebrow) {
   color: var(--color-muted);
   line-height: 1.7;
 }
 
-.quick-grid,
-.dashboard-grid {
+.order-grid {
   display: grid;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.quick-grid {
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
 }
 
-.quick-grid a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.quick-grid a:hover app-card {
-  filter: brightness(1.02);
-}
-
-.dashboard-grid {
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-}
-
-app-card strong {
-  display: block;
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  letter-spacing: -0.06em;
-  margin-top: 0.35rem;
+ul {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
 }
