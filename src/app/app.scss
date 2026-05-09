@@ -4,23 +4,9 @@
 }
 
 .app-layout {
-  display: grid;
-  grid-template-columns: 18rem minmax(0, 1fr);
-  gap: clamp(1rem, 3vw, 2rem);
   width: min(1320px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 1.5rem 0 0;
-  transition: grid-template-columns 180ms ease;
-}
-
-.app-layout--drawer-closed {
-  grid-template-columns: 0 minmax(0, 1fr);
-}
-
-.app-layout--drawer-closed app-drawer {
-  overflow: hidden;
-  pointer-events: none;
-  visibility: hidden;
 }
 
 .app-shell {
@@ -33,13 +19,26 @@
   width: 100%;
 }
 
-@media (max-width: 960px) {
-  .app-layout,
-  .app-layout--drawer-closed {
-    grid-template-columns: 1fr;
-  }
+.app-layout app-drawer {
+  position: fixed;
+  z-index: 30;
+  top: 5.5rem;
+  right: clamp(1rem, 4vw, 3rem);
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  transform: translateX(calc(100% + clamp(1rem, 4vw, 3rem)));
+  transition: transform 220ms ease, visibility 220ms ease;
+  visibility: hidden;
+}
 
-  .app-layout--drawer-closed app-drawer {
-    display: none;
+.app-layout--drawer-open app-drawer {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+@media (max-width: 680px) {
+  .app-layout app-drawer {
+    top: 8.5rem;
   }
 }

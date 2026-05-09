@@ -1,8 +1,4 @@
 <header class="site-header">
-  <button class="icon-button" type="button" aria-label="Toggle drawer navigation" (click)="layout.toggleDrawer()">
-    ☰
-  </button>
-
   <div class="brand" aria-label="Food Restorant dashboard">
     <span class="brand__mark">FR</span>
     <span>
@@ -10,6 +6,10 @@
       <small>{{ auth.user()?.role }} dashboard</small>
     </span>
   </div>
+
+  <button class="icon-button nav-toggle" type="button" aria-label="Toggle drawer navigation" (click)="layout.toggleDrawer()">
+    ☰
+  </button>
 
   <div class="header-actions">
     <button class="icon-button" type="button" aria-label="Toggle light or dark mode" (click)="theme.toggle()">

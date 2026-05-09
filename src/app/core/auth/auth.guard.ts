@@ -11,6 +11,13 @@ export const authGuard: CanActivateFn = (): true | UrlTree => {
   return auth.isAuthenticated() ? true : router.createUrlTree(['/login']);
 };
 
+export const loginRedirectGuard: CanActivateFn = (): true | UrlTree => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  return auth.isAuthenticated() ? router.createUrlTree(['/dashboard']) : true;
+};
+
 export const roleGuard = (roles: readonly AuthRole[]): CanActivateFn => {
   return (): true | UrlTree => {
     const auth = inject(AuthService);
