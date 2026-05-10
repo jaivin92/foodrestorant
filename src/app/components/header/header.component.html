@@ -15,7 +15,7 @@
     <button class="icon-button" type="button" aria-label="Toggle light or dark mode" (click)="theme.toggle()">
       {{ theme.isDark() ? '☀' : '☾' }}
     </button>
-    <span class="user-pill">{{ auth.user()?.role }}</span>
+    <!-- <span class="user-pill">{{ auth.user()?.role }}</span> -->
     <app-button variant="secondary" (click)="auth.logout()">Logout</app-button>
   </div>
 </header>

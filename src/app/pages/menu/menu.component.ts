@@ -1,3 +1,4 @@
+import { CommonModule } from "@angular/common";
 import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 import { ButtonComponent } from "src/app/components/ui/button/button.component";
 import { CardComponent } from "src/app/components/ui/card/card.component";
@@ -6,7 +7,7 @@ import { DataTableRequest, FoodModel } from "src/app/models";
 
 @Component({
     selector: 'app-menu',
-    imports: [ButtonComponent, CardComponent],
+    imports: [CommonModule,ButtonComponent, CardComponent],
     templateUrl: './menu.component.html',
     styleUrl: './menu.component.scss',
 })
@@ -15,6 +16,7 @@ export class MenuComponent implements OnInit {
     public foodService = inject(FoodApiService);
     foodmodel : FoodModel[]=[]
     datatable: DataTableRequest = new DataTableRequest()
+    randomId = Math.random();
     ngOnInit(): void {
         this.loadData();
     }

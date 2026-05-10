@@ -7,3 +7,25 @@
     </app-card>
     }
 </section>
+
+<div class="food-grid">
+
+    <div class="food-card" *ngFor="let item of foodmodel">
+        <!-- <img [src]="item.Image" alt="food"> -->
+        <img  [src]="'https://picsum.photos/600/400'" alt="food">
+
+        <div class="food-info">
+            <div class="title-row">
+                <h3>{{item.Name}}</h3>
+                <span>₹{{item.Price}}</span>
+            </div>
+
+            <p>{{item.Description}}</p>
+
+            <div class="card-footer">
+                <span>10:00 min</span>
+                <button>+</button>
+            </div>
+        </div>
+    </div>
+</div>
