@@ -12,6 +12,13 @@ export type OrderStatus = 'Pending' | 'Accepted' | 'Preparing' | 'Ready' | 'Serv
 export type OrderType = 'DineIn' | 'TakeAway' | 'Delivery';
 export type FoodTableType = 'Available' | 'Reserved' | 'Occupied' | 'Cleaning';
 
+export enum FoodTableTypeEnum {
+  Available = 1,
+  Reserved = 2,
+  Occupied = 3,
+  Cleaning = 4
+}
+
 export const orderStatusValues: readonly OrderStatus[] = [
   'Pending',
   'Accepted',
@@ -69,7 +76,7 @@ export interface FoodModel extends BaseModel {
 }
 
 export interface FoodTableModel extends BaseModel {
-  TableStatus: FoodTableType;
+  TableStatus: FoodTableTypeEnum;
   BookTime: string;
   Name: string;
 }

@@ -15,16 +15,16 @@
 </section>
 
 <section class="table-list" aria-label="Table wise status">
-  @for (table of tables; track table.name) {
+  @for (table of foodTable; track table.Id) {
     <app-card>
       <div class="table-row">
         <div>
-          <p class="meta">{{ table.status }}</p>
-          <h2>{{ table.name }} • {{ table.guests }} guests</h2>
+          <p class="meta">{{ table.TableStatus }}</p>
+          <h2>{{ table.Name }} •  guests</h2>
         </div>
-        <span>{{ table.time }}</span>
+        <span>{{ table.BookTime }}</span>
       </div>
-      <p>Assigned: {{ table.server }}</p>
+      <p>Assigned: {{ table.Name }}</p>
     </app-card>
   }
 </section>
