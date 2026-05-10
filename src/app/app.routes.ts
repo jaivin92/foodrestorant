@@ -66,6 +66,12 @@ export const routes: Routes = [
     title: 'Settings | Food Restorant',
   },
   {
+    path: 'menu',
+    canActivate: [authGuard, roleGuard(allAuthenticatedRoles)],
+    loadComponent: () => import('./pages/menu/menu.component').then((m) => m.MenuComponent),
+    title: 'MENU | Food Restorant',
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },

@@ -53,4 +53,10 @@ export const drawerNavigationItems: readonly NavigationItem[] = [
     description: 'Basic user detail and password change',
     roles: allAuthenticatedRoles,
   },
+  {
+    label: 'Menu',
+    route: '/menu',
+    description: 'Menu',
+    roles: allAuthenticatedRoles,
+  },
 ];

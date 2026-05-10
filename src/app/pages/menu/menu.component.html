@@ -1,0 +1,9 @@
+<section class="queue-grid">
+    @for (item of foodmodel; track item.Id) {
+    <app-card>
+        <p class="meta">{{ item.Name }}</p>
+        <strong>{{ item.Price }}</strong>
+        <p>{{ item.Description }}</p>
+    </app-card>
+    }
+</section>
