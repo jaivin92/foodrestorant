@@ -5,12 +5,16 @@
 </section>
 
 <section class="queue-grid">
-  @for (item of queue; track item.order) {
-    <app-card>
-      <p class="meta">{{ item.status }}</p>
-      <h2>{{ item.order }} • {{ item.table }}</h2>
-      <p>{{ item.station }}</p>
-      <strong>{{ item.eta }}</strong>
-    </app-card>
-  }
+  <app-card *ngFor="let queueItem of queue">
+    <p class="meta">Accepted</p>
+    <h2>Order #{{ queueItem.order.Id }}</h2>
+    <p>{{ queueItem.order.OrderDate | date : 'medium' }}</p>
+    <strong>{{ queueItem.items.length }} item(s) cooking</strong>
+
+    <ul>
+      <li *ngFor="let item of queueItem.items">
+        Item #{{ item.FoodId }} • Qty {{ item.Quantity }} • Status {{ item.OrderStatus }}
+      </li>
+    </ul>
+  </app-card>
 </section>
