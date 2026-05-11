@@ -163,7 +163,7 @@ export class OrderDeskComponent implements OnInit {
   }
 
   private loadActiveOrders(): void {
-    const request = new DataTableRequest({ filterObj: { IsActive: true }, orderDir: 'desc' });
+    const request = new DataTableRequest({ filterObj: { IsActive: true, OrderStatus :OrderStatusEnum.Accepted, OrderType :OrderTypeEnum.DineIn }, orderDir: 'desc' });
     this.orderApi.getAll(request).subscribe((response) => {
       if (response.Status) {
         this.activeOrders = response.Data.Data;

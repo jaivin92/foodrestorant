@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 
 import { CardComponent } from '../../components/ui/card/card.component';
 import { OrderApiService, OrderItemApiService } from '../../core/api';
-import { DataTableRequest, OrderItemModel, OrderModel, OrderStatusEnum } from '../../models';
+import { DataTableRequest, OrderItemModel, OrderModel, OrderStatusEnum, OrderTypeEnum } from '../../models';
 
 interface KitchenQueueItem {
   order: OrderModel;
@@ -29,7 +29,7 @@ export class KitchenComponent implements OnInit {
 
   private loadQueue(): void {
     const acceptedOrderRequest = new DataTableRequest({
-      filterObj: { IsActive: true, OrderStatus: OrderStatusEnum.Accepted },
+      filterObj: { IsActive: true, OrderStatus: OrderStatusEnum.Accepted, OrderType :OrderTypeEnum.DineIn },
       orderDir: 'desc',
     });
 
