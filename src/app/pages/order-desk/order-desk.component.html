@@ -1,20 +1,63 @@
 <section class="page-heading">
   <p class="eyebrow">Order desk</p>
-  <h1>Table-wise order create</h1>
-  <p>Create orders by table, follow kitchen status, and hand completed bills to cashier.</p>
-  <app-button>Create table order</app-button>
+  <h1>Create and save table order</h1>
+  <p>Select products by category, set quantities, and save order with table id.</p>
 </section>
 
-<section class="order-grid">
-  @for (order of tableOrders; track order.order) {
-    <app-card>
-      <p class="meta">{{ order.status }}</p>
-      <h2>{{ order.table }} • {{ order.order }}</h2>
-      <ul>
-        @for (item of order.items; track item) {
-          <li>{{ item }}</li>
-        }
-      </ul>
-    </app-card>
-  }
+<section class="category-filter">
+  <button [class.active]="selectedCategoryId === null" (click)="setCategory(null)">All</button>
+  <button *ngFor="let category of categories" [class.active]="selectedCategoryId === category.Id" (click)="setCategory(category.Id)">
+    {{ category.Name }}
+  </button>
+</section>
+
+<section *ngFor="let group of groupedFoods" class="category-block">
+  <h2>{{ group.category?.Name || 'Uncategorized' }}</h2>
+
+  <div class="food-grid">
+    <article class="food-card" *ngFor="let food of group.items">
+      <div>
+        <h3>{{ food.Name }}</h3>
+        <p>{{ food.Description || 'Freshly prepared.' }}</p>
+      </div>
+      <div class="food-actions">
+        <span>₹{{ food.Price }}</span>
+        <button (click)="addItem(food)">Add</button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="cart-panel">
+  <h2>Current Order</h2>
+  <label>Table Id</label>
+  <input type="number" min="1" [(ngModel)]="tableId" placeholder="Table id" />
+
+  <label>Notes</label>
+  <textarea rows="2" [(ngModel)]="notes" placeholder="Optional notes"></textarea>
+
+  <div *ngIf="cartLines.length; else emptyState" class="cart-lines">
+    <div class="line" *ngFor="let line of cartLines">
+      <div>
+        <strong>{{ line.food.Name }}</strong>
+        <small>₹{{ line.food.Price }} x {{ line.quantity }}</small>
+      </div>
+      <div class="qty">
+        <button (click)="changeQty(line.food.Id, line.quantity - 1)">-</button>
+        <span>{{ line.quantity }}</span>
+        <button (click)="changeQty(line.food.Id, line.quantity + 1)">+</button>
+      </div>
+    </div>
+
+    <p class="totals">Qty: {{ totalQty }} • Total: ₹{{ totalAmount }}</p>
+  </div>
+
+  <ng-template #emptyState>
+    <p class="empty">No products added.</p>
+  </ng-template>
+
+  <button class="save-btn" [disabled]="isSaving" (click)="createOrder()">{{ isSaving ? 'Saving...' : 'Save Order' }}</button>
+
+  <p class="success" *ngIf="saveSuccess">{{ saveSuccess }}</p>
+  <p class="error" *ngIf="saveError">{{ saveError }}</p>
 </section>
