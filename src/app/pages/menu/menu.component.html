@@ -30,6 +30,7 @@
           </div>
 
           <p>{{ item.Description || 'Freshly prepared.' }}</p>
+          <button class="add-btn" (click)="addToOrder(item)">Add to order</button>
         </div>
       </article>
     </div>

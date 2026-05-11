@@ -87,3 +87,41 @@
     justify-content: start;
   }
 }
+
+.order-icon {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #e21b1b;
+  color: #fff;
+  font-size: 11px;
+  display: grid;
+  place-items: center;
+}
+
+.order-popover {
+  position: sticky;
+  top: 5.5rem;
+  z-index: 21;
+  margin: 0 1rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: .9rem;
+  background: var(--color-surface);
+  display: grid;
+  gap: .55rem;
+}
+
+.line { display:flex; justify-content: space-between; }
+.totals { font-weight: 700; }
+.place-btn { border: none; border-radius: 8px; background: var(--color-primary); color:#fff; padding:.5rem .75rem; }
+.success { color: #0f8a2a; }
+.error { color: #b91818; }
+.empty { color: var(--color-muted); }

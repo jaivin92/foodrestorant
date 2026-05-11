@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 
 import { FoodApiService, FoodCategoryApiService } from 'src/app/core/api';
+import { OrderCartService } from 'src/app/core/order-cart.service';
 import { DataTableRequest, FoodCategoryModel, FoodModel } from 'src/app/models';
 
 @Component({
@@ -14,6 +15,7 @@ export class MenuComponent implements OnInit {
   public changeDetectorRef = inject(ChangeDetectorRef);
   public foodService = inject(FoodApiService);
   public foodCategoryService = inject(FoodCategoryApiService);
+  public orderCart = inject(OrderCartService);
 
   foods: FoodModel[] = [];
   categories: FoodCategoryModel[] = [];
@@ -43,6 +45,10 @@ export class MenuComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
       });
     });
+  }
+
+  addToOrder(food: FoodModel): void {
+    this.orderCart.add(food);
   }
 
   setCategory(categoryId: number | null): void {

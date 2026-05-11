@@ -15,7 +15,38 @@
     <button class="icon-button" type="button" aria-label="Toggle light or dark mode" (click)="theme.toggle()">
       {{ theme.isDark() ? '☀' : '☾' }}
     </button>
-    <!-- <span class="user-pill">{{ auth.user()?.role }}</span> -->
+
+    <button class="icon-button order-icon" type="button" aria-label="View current order" (click)="toggleOrders()">
+      🛒
+      <span class="badge" *ngIf="orderCart.totalItems()">{{ orderCart.totalItems() }}</span>
+    </button>
+
     <app-button variant="secondary" (click)="auth.logout()">Logout</app-button>
   </div>
 </header>
+
+<section class="order-popover" *ngIf="showOrders()">
+  <h3>Current Order</h3>
+
+  <div *ngIf="orderCart.lines().length; else noItems">
+    <div class="line" *ngFor="let line of orderCart.lines()">
+      <span>{{ line.food.Name }} x {{ line.quantity }}</span>
+      <strong>₹{{ line.food.Price * line.quantity }}</strong>
+    </div>
+    <p class="totals">Total: ₹{{ orderCart.totalAmount() }}</p>
+  </div>
+
+  <ng-template #noItems>
+    <p class="empty">No products added yet.</p>
+  </ng-template>
+
+  <input type="number" min="1" [(ngModel)]="tableId" placeholder="Table id" />
+  <input type="text" [(ngModel)]="notes" placeholder="Notes (optional)" />
+
+  <button class="place-btn" [disabled]="orderCart.isSaving()" (click)="placeOrder()">
+    {{ orderCart.isSaving() ? 'Placing...' : 'Place Order' }}
+  </button>
+
+  <p class="success" *ngIf="orderMessage">{{ orderMessage }}</p>
+  <p class="error" *ngIf="orderError">{{ orderError }}</p>
+</section>
