@@ -1,8 +1,8 @@
 <section class="menu-page">
   <header class="page-heading">
     <p class="eyebrow">Menu</p>
-    <h1>Category-wise products</h1>
-    <p>Choose items by category, then place order using table id.</p>
+    <h1>All products by category</h1>
+    <p>Browse all menu products grouped category-wise.</p>
   </header>
 
   <section class="category-filter">
@@ -18,50 +18,20 @@
 
   <section *ngFor="let group of groupedFoods" class="category-block">
     <h2>{{ group.category?.Name || 'Uncategorized' }}</h2>
+
     <div class="food-grid">
       <article class="food-card" *ngFor="let item of group.items">
         <img [src]="'https://picsum.photos/seed/' + item.Id + '/600/400'" alt="food image" />
+
         <div class="food-info">
           <div class="title-row">
             <h3>{{ item.Name }}</h3>
             <span>₹{{ item.Price }}</span>
           </div>
+
           <p>{{ item.Description || 'Freshly prepared.' }}</p>
-          <button class="add-btn" (click)="addToCart(item)">Add</button>
         </div>
       </article>
     </div>
   </section>
-
-  <aside class="order-panel">
-    <h2>Place Order</h2>
-    <label for="tableId">Table Id</label>
-    <input id="tableId" type="number" min="1" [(ngModel)]="tableId" placeholder="Enter table id" />
-
-    <div class="cart-lines" *ngIf="cartItems.length; else emptyCart">
-      <div class="cart-line" *ngFor="let line of cartItems">
-        <div>
-          <strong>{{ line.food.Name }}</strong>
-          <small>₹{{ line.food.Price }} each</small>
-        </div>
-        <div class="qty-controls">
-          <button (click)="updateQuantity(line.food.Id, line.quantity - 1)">-</button>
-          <span>{{ line.quantity }}</span>
-          <button (click)="updateQuantity(line.food.Id, line.quantity + 1)">+</button>
-        </div>
-      </div>
-      <p class="totals">Items: {{ totalItems }} • Total: ₹{{ cartTotal }}</p>
-    </div>
-
-    <ng-template #emptyCart>
-      <p class="empty">No items selected yet.</p>
-    </ng-template>
-
-    <button class="place-btn" [disabled]="isSubmitting" (click)="placeOrder()">
-      {{ isSubmitting ? 'Placing...' : 'Place Order' }}
-    </button>
-
-    <p class="success" *ngIf="orderMessage">{{ orderMessage }}</p>
-    <p class="error" *ngIf="orderError">{{ orderError }}</p>
-  </aside>
 </section>

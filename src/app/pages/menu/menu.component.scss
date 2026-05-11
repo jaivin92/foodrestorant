@@ -59,47 +59,11 @@
   object-fit: cover;
 }
 
-.food-info { padding: 1rem; }
-.title-row { display: flex; justify-content: space-between; }
-
-.add-btn,
-.place-btn,
-.qty-controls button {
-  border: none;
-  border-radius: 8px;
-  padding: 0.4rem 0.7rem;
-  cursor: pointer;
-}
-
-.add-btn,
-.place-btn {
-  background: var(--color-primary);
-  color: white;
-}
-
-.order-panel {
-  border: 1px solid #ececec;
-  border-radius: 16px;
+.food-info {
   padding: 1rem;
-  background: #fff;
-  display: grid;
-  gap: 0.8rem;
-
-  input {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 0.55rem;
-  }
 }
 
-.cart-line {
+.title-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.6rem;
 }
-
-.qty-controls { display: flex; align-items: center; gap: 0.4rem; }
-.totals { font-weight: 700; }
-.success { color: #0f8a2a; }
-.error { color: #b91818; }
-.empty { color: #777; }
