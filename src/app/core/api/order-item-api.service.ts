@@ -8,6 +8,7 @@ export class OrderItemApiService {
   private readonly api = inject(BmsApiService);
 
   insert(model: OrderItemModel) {
+    console.log('Inserting order item:', model);
     return this.api.insert('OrderItem', model);
   }
 

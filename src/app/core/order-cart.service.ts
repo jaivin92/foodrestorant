@@ -4,7 +4,7 @@ import { finalize, forkJoin, of, switchMap } from 'rxjs';
 import { OrderApiService } from './api/order-api.service';
 import { OrderItemApiService } from './api/order-item-api.service';
 import { AuthService } from './auth/auth.service';
-import { FoodModel, OrderItemModel, OrderModel, OrderStatus } from '../models';
+import { FoodModel, OrderItemModel, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum, orderTypeValues } from '../models';
 
 interface CartLine {
   food: FoodModel;
@@ -48,11 +48,11 @@ export class OrderCartService {
     }
 
     const orderPayload: OrderModel = {
-      Id: 0,
+       Id: 0,
       IsActive: true,
       UserId: user.id,
-      OrderStatus: 'Pending' as OrderStatus,
-      OrderType: 'DineIn',
+      OrderStatus: OrderStatusEnum.Pending,
+      OrderType: OrderTypeEnum.DineIn,
       OrderDate: new Date().toISOString(),
       Notes: notes || null,
     };
@@ -68,14 +68,14 @@ export class OrderCartService {
         const orderId = response.Data.Id;
         const itemRequests = this.linesSignal().map((line) => {
           const model: OrderItemModel = {
-            Id: 0,
+            //Id: 0,
             IsActive: true,
             OrderId: orderId,
             FoodId: line.food.Id,
             Quantity: line.quantity,
             FoodTableId: tableId,
-            OrderStatus: 'Pending',
-            Notes: null,
+            OrderStatus: OrderStatusEnum.Pending,
+            Notes: "teststes",
           };
 
           return this.orderItemApi.insert(model);

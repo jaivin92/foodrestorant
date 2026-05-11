@@ -19,6 +19,23 @@ export enum FoodTableTypeEnum {
   Cleaning = 4
 }
 
+export enum OrderStatusEnum {
+  Pending = 1,
+  Accepted = 2,
+  Preparing = 3,
+  Ready = 4,
+  Served = 5,
+  Completed = 6,
+  Cancelled = 7
+}
+
+
+export enum OrderTypeEnum {
+  DineIn = 1,
+  TakeAway = 2,
+  Delivery = 3
+}
+
 export const orderStatusValues: readonly OrderStatus[] = [
   'Pending',
   'Accepted',
@@ -56,7 +73,7 @@ export class DataTableRequest {
 export type DataTableRequestModel = DataTableRequest;
 
 export interface BaseModel {
-  Id: number;
+  Id?: number;
   IsActive: boolean;
   TotalRecord?: number;
   fIds?: number[];
@@ -83,18 +100,18 @@ export interface FoodTableModel extends BaseModel {
 
 export interface OrderModel extends BaseModel {
   UserId: number;
-  OrderStatus: OrderStatus;
-  OrderType: OrderType;
+  OrderStatus?: OrderStatusEnum;
+  OrderType?: OrderTypeEnum;
   OrderDate: string;
   Notes?: string | null;
 }
 
 export interface OrderItemModel extends BaseModel {
   Quantity: number;
-  FoodId: number;
+  FoodId?: number;
   Notes?: string | null;
   OrderId: number;
-  OrderStatus: string;
+  OrderStatus?: OrderStatusEnum;
   FoodTableId: number;
 }
 

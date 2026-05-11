@@ -10,7 +10,7 @@
     <button
       *ngFor="let category of categories"
       [class.active]="selectedCategoryId === category.Id"
-      (click)="setCategory(category.Id)"
+      (click)="setCategory(category.Id!!)"
     >
       {{ category.Name }}
     </button>

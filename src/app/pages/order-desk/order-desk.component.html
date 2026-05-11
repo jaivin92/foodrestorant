@@ -6,7 +6,7 @@
 
 <section class="category-filter">
   <button [class.active]="selectedCategoryId === null" (click)="setCategory(null)">All</button>
-  <button *ngFor="let category of categories" [class.active]="selectedCategoryId === category.Id" (click)="setCategory(category.Id)">
+  <button *ngFor="let category of categories" [class.active]="selectedCategoryId === category.Id" (click)="setCategory(category.Id!!)">
     {{ category.Name }}
   </button>
 </section>
@@ -43,9 +43,9 @@
         <small>₹{{ line.food.Price }} x {{ line.quantity }}</small>
       </div>
       <div class="qty">
-        <button (click)="changeQty(line.food.Id, line.quantity - 1)">-</button>
+        <button (click)="changeQty(line.food.Id!!, line.quantity - 1)">-</button>
         <span>{{ line.quantity }}</span>
-        <button (click)="changeQty(line.food.Id, line.quantity + 1)">+</button>
+        <button (click)="changeQty(line.food.Id!!, line.quantity + 1)">+</button>
       </div>
     </div>
 

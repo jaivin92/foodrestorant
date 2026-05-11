@@ -60,7 +60,7 @@ export class AuthService {
 
   private toAuthUser(user: UserModel): AuthUser {
     return {
-      id: user.Id,
+      id: user.Id!!,
       name: user.Name,
       email: user.Email ?? '',
       mobile: user.Mobile,

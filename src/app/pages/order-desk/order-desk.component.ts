@@ -5,7 +5,7 @@ import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
 import { FoodApiService, FoodCategoryApiService, OrderApiService, OrderItemApiService } from 'src/app/core/api';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderModel, OrderStatus } from 'src/app/models';
+import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
 
 interface CartLine {
   food: FoodModel;
@@ -63,11 +63,11 @@ export class OrderDeskComponent implements OnInit {
   }
 
   addItem(food: FoodModel): void {
-    const line = this.cart.get(food.Id);
+    const line = this.cart.get(food.Id!!);
     if (line) {
       line.quantity += 1;
     } else {
-      this.cart.set(food.Id, { food, quantity: 1 });
+      this.cart.set(food.Id!!, { food, quantity: 1 });
     }
   }
 
@@ -107,8 +107,8 @@ export class OrderDeskComponent implements OnInit {
       Id: 0,
       IsActive: true,
       UserId: user.id,
-      OrderStatus: 'Pending' as OrderStatus,
-      OrderType: 'DineIn',
+      OrderStatus: OrderStatusEnum.Pending,
+      OrderType: OrderTypeEnum.DineIn,
       OrderDate: new Date().toISOString(),
       Notes: this.notes || null,
     };
@@ -132,7 +132,7 @@ export class OrderDeskComponent implements OnInit {
               FoodId: line.food.Id,
               Quantity: line.quantity,
               FoodTableId: this.tableId as number,
-              OrderStatus: 'Pending',
+              OrderStatus: 1,
               Notes: null,
             };
 
