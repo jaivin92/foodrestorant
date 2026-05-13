@@ -1,0 +1,41 @@
+<section class="page-heading">
+  <p class="eyebrow">Settings</p>
+  <h1>User profile</h1>
+  <p>Review your basic account details and change your password from the default drawer menu.</p>
+</section>
+
+<section class="settings-grid">
+  <app-card>
+    <p class="meta">Basic detail</p>
+    <dl>
+      <div>
+        <dt>Name</dt>
+        <dd>{{ auth.user()?.name }}</dd>
+      </div>
+      <div>
+        <dt>Email</dt>
+        <dd>{{ auth.user()?.email }}</dd>
+      </div>
+      <div>
+        <dt>Role</dt>
+        <dd>{{ auth.role() }}</dd>
+      </div>
+    </dl>
+  </app-card>
+
+  <app-card>
+    <p class="meta">Change password</p>
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <app-input id="currentPassword" label="Current password" type="password" autocomplete="current-password" formControlName="currentPassword" />
+      <app-input id="newPassword" label="New password" type="password" autocomplete="new-password" formControlName="newPassword" />
+      <app-input id="confirmPassword" label="Confirm password" type="password" autocomplete="new-password" formControlName="confirmPassword" />
+      @if (passwordForm.controls.confirmPassword.hasError('passwordMismatch')) {
+        <p class="error">New password and confirm password must match.</p>
+      }
+      @if (passwordChanged()) {
+        <p class="success">Password changed successfully for this session.</p>
+      }
+      <app-button type="submit" [disabled]="passwordForm.invalid">Update password</app-button>
+    </form>
+  </app-card>
+</section>

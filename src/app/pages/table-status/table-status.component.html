@@ -1,0 +1,30 @@
+<section class="page-heading">
+  <p class="eyebrow">Table booking</p>
+  <h1>All table status</h1>
+  <p>Track booked, pending, occupied, available, and cleaning tables from the floor drawer menu.</p>
+</section>
+
+<section class="status-grid" aria-label="Table status summary">
+  @for (item of tableSummary; track item.status) {
+    <app-card>
+      <p class="meta">{{ item.status }}</p>
+      <strong>{{ item.count }}</strong>
+      <p>{{ item.detail }}</p>
+    </app-card>
+  }
+</section>
+
+<section class="table-list" aria-label="Table wise status">
+  @for (table of tables; track table.name) {
+    <app-card>
+      <div class="table-row">
+        <div>
+          <p class="meta">{{ table.status }}</p>
+          <h2>{{ table.name }} • {{ table.guests }} guests</h2>
+        </div>
+        <span>{{ table.time }}</span>
+      </div>
+      <p>Assigned: {{ table.server }}</p>
+    </app-card>
+  }
+</section>
