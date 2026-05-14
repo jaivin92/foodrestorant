@@ -61,3 +61,20 @@
   <p class="success" *ngIf="saveSuccess">{{ saveSuccess }}</p>
   <p class="error" *ngIf="saveError">{{ saveError }}</p>
 </section>
+
+<section class="cart-panel">
+  <h2>Active Orders</h2>
+  <div *ngIf="activeOrders.length; else noActiveOrders" class="cart-lines">
+    <div class="line" *ngFor="let order of activeOrders">
+      <div>
+        <strong>Order #{{ order.Id }}</strong>
+        <small>Status: {{ order.OrderStatus }} • User: {{ order.UserId }}</small>
+      </div>
+      <small>{{ order.OrderDate | date : 'medium' }}</small>
+    </div>
+  </div>
+
+  <ng-template #noActiveOrders>
+    <p class="empty">No active orders.</p>
+  </ng-template>
+</section>

@@ -38,11 +38,13 @@ export class OrderDeskComponent implements OnInit {
   isSaving = false;
   saveError = '';
   saveSuccess = '';
+  activeOrders: OrderModel[] = [];
 
   private readonly cart = new Map<number, CartLine>();
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadActiveOrders();
   }
 
   get cartLines(): CartLine[] {
@@ -152,11 +154,22 @@ export class OrderDeskComponent implements OnInit {
           this.cart.clear();
           this.notes = '';
           this.tableId = null;
+          this.loadActiveOrders();
         },
         error: (err: Error) => {
           this.saveError = err.message || 'Failed to save order.';
         },
       });
+  }
+
+  private loadActiveOrders(): void {
+    const request = new DataTableRequest({ filterObj: { IsActive: true, OrderStatus :OrderStatusEnum.Accepted, OrderType :OrderTypeEnum.DineIn }, orderDir: 'desc' });
+    this.orderApi.getAll(request).subscribe((response) => {
+      if (response.Status) {
+        this.activeOrders = response.Data.Data;
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   private loadProducts(): void {
