@@ -11,55 +11,64 @@
   </button>
 </section>
 
-<section *ngFor="let group of groupedFoods" class="category-block">
-  <h2>{{ group.category?.Name || 'Uncategorized' }}</h2>
+<section class="order-layout">
+  <aside class="order-slider" [class.open]="isOrderPanelOpen">
+    <button class="slider-toggle" (click)="toggleOrderPanel()">{{ isOrderPanelOpen ? 'Close Order Form' : 'Open Order Form' }}</button>
 
-  <div class="food-grid">
-    <article class="food-card" *ngFor="let food of group.items">
-      <div>
-        <h3>{{ food.Name }}</h3>
-        <p>{{ food.Description || 'Freshly prepared.' }}</p>
-      </div>
-      <div class="food-actions">
-        <span>₹{{ food.Price }}</span>
-        <button (click)="addItem(food)">Add</button>
-      </div>
-    </article>
-  </div>
-</section>
+    <div class="cart-panel" *ngIf="isOrderPanelOpen">
+      <h2>Current Order</h2>
+      <label>Table Id</label>
+      <input type="number" min="1" [(ngModel)]="tableId" placeholder="Table id" />
 
-<section class="cart-panel">
-  <h2>Current Order</h2>
-  <label>Table Id</label>
-  <input type="number" min="1" [(ngModel)]="tableId" placeholder="Table id" />
+      <label>Notes</label>
+      <textarea rows="2" [(ngModel)]="notes" placeholder="Optional notes"></textarea>
 
-  <label>Notes</label>
-  <textarea rows="2" [(ngModel)]="notes" placeholder="Optional notes"></textarea>
+      <div *ngIf="cartLines.length; else emptyState" class="cart-lines">
+        <div class="line" *ngFor="let line of cartLines">
+          <div>
+            <strong>{{ line.food.Name }}</strong>
+            <small>₹{{ line.food.Price }} x {{ line.quantity }}</small>
+          </div>
+          <div class="qty">
+            <button (click)="changeQty(line.food.Id!!, line.quantity - 1)">-</button>
+            <span>{{ line.quantity }}</span>
+            <button (click)="changeQty(line.food.Id!!, line.quantity + 1)">+</button>
+            <button class="remove-btn" (click)="removeItem(line.food.Id!!)">Remove</button>
+          </div>
+        </div>
 
-  <div *ngIf="cartLines.length; else emptyState" class="cart-lines">
-    <div class="line" *ngFor="let line of cartLines">
-      <div>
-        <strong>{{ line.food.Name }}</strong>
-        <small>₹{{ line.food.Price }} x {{ line.quantity }}</small>
+        <p class="totals">Qty: {{ totalQty }} • Total: ₹{{ totalAmount }}</p>
       </div>
-      <div class="qty">
-        <button (click)="changeQty(line.food.Id!!, line.quantity - 1)">-</button>
-        <span>{{ line.quantity }}</span>
-        <button (click)="changeQty(line.food.Id!!, line.quantity + 1)">+</button>
-      </div>
+
+      <ng-template #emptyState>
+        <p class="empty">No products added.</p>
+      </ng-template>
+
+      <button class="save-btn" [disabled]="isSaving" (click)="createOrder()">{{ isSaving ? 'Saving...' : 'Save Order' }}</button>
+
+      <p class="success" *ngIf="saveSuccess">{{ saveSuccess }}</p>
+      <p class="error" *ngIf="saveError">{{ saveError }}</p>
     </div>
+  </aside>
 
-    <p class="totals">Qty: {{ totalQty }} • Total: ₹{{ totalAmount }}</p>
+  <div class="order-products">
+    <section *ngFor="let group of groupedFoods" class="category-block">
+      <h2>{{ group.category?.Name || 'Uncategorized' }}</h2>
+
+      <div class="food-grid">
+        <article class="food-card" *ngFor="let food of group.items">
+          <div>
+            <h3>{{ food.Name }}</h3>
+            <p>{{ food.Description || 'Freshly prepared.' }}</p>
+          </div>
+          <div class="food-actions">
+            <span>₹{{ food.Price }}</span>
+            <button (click)="addItem(food)">Add</button>
+          </div>
+        </article>
+      </div>
+    </section>
   </div>
-
-  <ng-template #emptyState>
-    <p class="empty">No products added.</p>
-  </ng-template>
-
-  <button class="save-btn" [disabled]="isSaving" (click)="createOrder()">{{ isSaving ? 'Saving...' : 'Save Order' }}</button>
-
-  <p class="success" *ngIf="saveSuccess">{{ saveSuccess }}</p>
-  <p class="error" *ngIf="saveError">{{ saveError }}</p>
 </section>
 
 <section class="cart-panel">
