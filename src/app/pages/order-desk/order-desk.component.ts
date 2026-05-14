@@ -35,6 +35,7 @@ export class OrderDeskComponent implements OnInit {
 
   tableId: number | null = null;
   notes = '';
+  diningType = 'Dine In';
   isSaving = false;
   saveError = '';
   saveSuccess = '';
