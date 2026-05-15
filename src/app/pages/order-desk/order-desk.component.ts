@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize, forkJoin } from 'rxjs';
 
-import { FoodApiService, FoodCategoryApiService, OrderApiService } from 'src/app/core/api';
+import { FoodApiService, FoodCategoryApiService, OrderApiService, OrderItemApiService } from 'src/app/core/api';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderItemStatusEnum, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
 
@@ -24,6 +24,7 @@ export class OrderDeskComponent implements OnInit {
   private readonly foodApi = inject(FoodApiService);
   private readonly categoryApi = inject(FoodCategoryApiService);
   private readonly orderApi = inject(OrderApiService);
+  private readonly orderItemApi = inject(OrderItemApiService);
   private readonly authService = inject(AuthService);
 
   readonly datatable = new DataTableRequest({ filterObj: { IsActive: true } });
@@ -117,6 +118,15 @@ export class OrderDeskComponent implements OnInit {
       return;
     }
 
+    const existingOrder = this.isDineIn
+      ? this.activeOrders.find((order) => order.FoodTableId === this.tableId)
+      : undefined;
+
+    if (existingOrder?.Id) {
+      this.appendItemsToOrder(existingOrder.Id);
+      return;
+    }
+
     const orderPayload: OrderModel = {
       Id: 0,
       IsActive: true,
@@ -165,6 +175,41 @@ export class OrderDeskComponent implements OnInit {
         },
         error: (err: Error) => {
           this.saveError = err.message || 'Failed to save order.';
+        },
+      });
+  }
+
+
+  private appendItemsToOrder(orderId: number): void {
+    const itemPayloads: OrderItemModel[] = this.cartLines.map((line) => ({
+      Id: 0,
+      IsActive: true,
+      OrderId: orderId,
+      FoodId: line.food.Id,
+      Quantity: line.quantity,
+      FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+      OrderStatus: OrderStatusEnum.Preparing,
+      Notes: line.notes || null,
+    }));
+
+    this.isSaving = true;
+
+    forkJoin(itemPayloads.map((item) => this.orderItemApi.insert(item)))
+      .pipe(finalize(() => {
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.saveSuccess = `Added ${this.totalQty} item(s) to order #${orderId}.`;
+          this.cart.clear();
+          this.notes = '';
+          this.customerName = '';
+          this.tableId = null;
+          this.loadActiveOrders();
+        },
+        error: (err: Error) => {
+          this.saveError = err.message || 'Failed to update order items.';
         },
       });
   }
