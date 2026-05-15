@@ -112,6 +112,22 @@ export class OrderDeskComponent implements OnInit {
     this.customerName = order.CustomerName ?? '';
     this.saveError = '';
     this.saveSuccess = '';
+
+    this.cart.clear();
+    this.applyOrderItemsToCart(order.OrderItemModels ?? []);
+
+    if ((!order.OrderItemModels || order.OrderItemModels.length === 0) && order.Id) {
+      this.orderApi.getById(order.Id).subscribe({
+        next: (response) => {
+          if (!response.Status) {
+            return;
+          }
+          this.customerName = response.Data.CustomerName ?? this.customerName;
+          this.applyOrderItemsToCart(response.Data.OrderItemModels ?? []);
+          this.cdr.detectChanges();
+        },
+      });
+    }
   }
 
   createOrder(): void {
@@ -249,5 +265,26 @@ export class OrderDeskComponent implements OnInit {
       category: this.categories.find((c) => c.Id === categoryId) ?? null,
       items,
     }));
+  }
+
+  private applyOrderItemsToCart(orderItems: OrderItemModel[]): void {
+    this.cart.clear();
+
+    for (const item of orderItems) {
+      if (!item.FoodId) {
+        continue;
+      }
+
+      const food = this.foods.find((f) => f.Id === item.FoodId);
+      if (!food) {
+        continue;
+      }
+
+      this.cart.set(food.Id!!, {
+        food,
+        quantity: item.Quantity,
+        notes: item.Notes ?? '',
+      });
+    }
   }
 }
