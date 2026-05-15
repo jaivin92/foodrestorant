@@ -62,6 +62,10 @@ export class OrderDeskComponent implements OnInit {
     return this.cartLines.reduce((sum, line) => sum + line.food.Price * line.quantity, 0);
   }
 
+  get occupiedTableOrders(): OrderModel[] {
+    return this.activeOrders.filter((order) => typeof order.FoodTableId === 'number' && order.FoodTableId > 0);
+  }
+
   setCategory(categoryId: number | null): void {
     this.selectedCategoryId = categoryId;
     this.groupProducts();
@@ -73,7 +77,7 @@ export class OrderDeskComponent implements OnInit {
     if (line) {
       line.quantity += 1;
     } else {
-          this.cart.set(food.Id!!, { food, quantity: 1, notes: '' });
+      this.cart.set(food.Id!!, { food, quantity: 1, notes: '' });
     }
   }
 
@@ -95,6 +99,19 @@ export class OrderDeskComponent implements OnInit {
 
   toggleOrderPanel(forceState?: boolean): void {
     this.isOrderPanelOpen = typeof forceState === 'boolean' ? forceState : !this.isOrderPanelOpen;
+  }
+
+  openOccupiedTable(order: OrderModel): void {
+    if (!order.FoodTableId || order.FoodTableId <= 0) {
+      return;
+    }
+
+    this.isOrderPanelOpen = true;
+    this.diningType = 'DineIn';
+    this.tableId = order.FoodTableId;
+    this.customerName = order.CustomerName ?? '';
+    this.saveError = '';
+    this.saveSuccess = '';
   }
 
   createOrder(): void {
@@ -190,7 +207,7 @@ export class OrderDeskComponent implements OnInit {
   }
 
   private loadActiveOrders(): void {
-    const request = new DataTableRequest({ filterObj: { IsActive: true, OrderStatus :OrderStatusEnum.Accepted, OrderType :OrderTypeEnum.DineIn }, orderDir: 'desc' });
+    const request = new DataTableRequest({ filterObj: { IsActive: true, OrderStatus: OrderStatusEnum.Accepted, OrderType: OrderTypeEnum.DineIn }, orderDir: 'desc' });
     this.orderApi.getAll(request).subscribe((response) => {
       if (response.Status) {
         this.activeOrders = response.Data.Data;
