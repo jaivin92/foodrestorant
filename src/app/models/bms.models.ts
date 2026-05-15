@@ -29,6 +29,12 @@ export enum OrderStatusEnum {
   Cancelled = 7
 }
 
+export enum OrderItemStatusEnum {
+   Preparing = 1,
+   Served = 2,
+   Parcel = 3,
+}
+
 
 export enum OrderTypeEnum {
   DineIn = 1,

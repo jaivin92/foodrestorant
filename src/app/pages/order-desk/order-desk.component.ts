@@ -5,7 +5,7 @@ import { finalize, forkJoin } from 'rxjs';
 
 import { FoodApiService, FoodCategoryApiService, OrderApiService } from 'src/app/core/api';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
+import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderItemStatusEnum, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
 
 interface CartLine {
   food: FoodModel;
@@ -135,7 +135,7 @@ export class OrderDeskComponent implements OnInit {
         FoodId: line.food.Id,
         Quantity: line.quantity,
         FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
-        OrderStatus: OrderStatusEnum.Accepted,
+        OrderItemStatus: OrderItemStatusEnum.Preparing,
         Notes: line.notes || null,
       })),
     };
