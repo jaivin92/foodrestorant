@@ -11,6 +11,7 @@ interface CartLine {
   food: FoodModel;
   quantity: number;
   notes: string;
+  isExistingItem?: boolean;
 }
 
 @Component({
@@ -42,6 +43,7 @@ export class OrderDeskComponent implements OnInit {
   saveSuccess = '';
   activeOrders: OrderModel[] = [];
   isOrderPanelOpen = false;
+  editingOrderId: number | null = null;
 
   private readonly cart = new Map<number, CartLine>();
 
@@ -112,6 +114,7 @@ export class OrderDeskComponent implements OnInit {
     this.customerName = order.CustomerName ?? '';
     this.saveError = '';
     this.saveSuccess = '';
+    this.editingOrderId = order.Id ?? null;
 
     this.cart.clear();
     this.applyOrderItemsToCart(order.OrderItemModels ?? []);
@@ -130,7 +133,7 @@ export class OrderDeskComponent implements OnInit {
     }
   }
 
-  createOrder(): void {
+  saveOrder(): void {
     this.saveError = '';
     this.saveSuccess = '';
 
@@ -151,7 +154,7 @@ export class OrderDeskComponent implements OnInit {
     }
 
     const orderPayload: OrderModel = {
-      Id: 0,
+      Id: this.editingOrderId ?? 0,
       IsActive: true,
       UserId: user.id,
       OrderStatus: OrderStatusEnum.Accepted,
@@ -162,7 +165,7 @@ export class OrderDeskComponent implements OnInit {
       CustomerId: 0,
       CustomerName: this.orderCustomerName,
       OrderItemModels: this.cartLines.map((line) => ({
-        Id: 0,
+        Id: line.isExistingItem ? 1 : 0,
         IsActive: true,
         OrderId: 0,
         FoodId: line.food.Id,
@@ -175,8 +178,14 @@ export class OrderDeskComponent implements OnInit {
 
     this.isSaving = true;
 
-    this.orderApi
-      .insert(orderPayload)
+    const saveRequest$ = this.editingOrderId
+      ? this.orderApi.update({
+          ...orderPayload,
+          OrderItemModels: orderPayload.OrderItemModels?.filter((line) => !line.Id || line.Id === 0) ?? [],
+        })
+      : this.orderApi.insert(orderPayload);
+
+    saveRequest$
       .pipe(finalize(() => {
         this.isSaving = false;
         this.cdr.detectChanges();
@@ -184,20 +193,23 @@ export class OrderDeskComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (!response.Status || !response.Data?.Id) {
-            this.saveError = response.Message || 'Unable to create order.';
+            this.saveError = response.Message || (this.editingOrderId ? 'Unable to update order.' : 'Unable to create order.');
             return;
           }
           const orderId = response.Data.Id;
-          this.saveSuccess = `Order #${orderId} saved successfully. Total ₹${this.totalAmount}.`;
+          this.saveSuccess = this.editingOrderId
+            ? `Order #${orderId} updated successfully. New items synced.`
+            : `Order #${orderId} saved successfully. Total ₹${this.totalAmount}.`;
           this.cart.clear();
           this.notes = '';
           this.customerName = '';
           this.diningType = 'DineIn';
           this.tableId = null;
+          this.editingOrderId = null;
           this.loadActiveOrders();
         },
         error: (err: Error) => {
-          this.saveError = err.message || 'Failed to save order.';
+          this.saveError = err.message || (this.editingOrderId ? 'Failed to update order.' : 'Failed to save order.');
         },
       });
   }
@@ -284,6 +296,7 @@ export class OrderDeskComponent implements OnInit {
         food,
         quantity: item.Quantity,
         notes: item.Notes ?? '',
+        isExistingItem: true,
       });
     }
   }

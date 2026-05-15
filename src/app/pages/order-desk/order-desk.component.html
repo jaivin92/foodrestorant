@@ -87,8 +87,8 @@
       </ng-template>
 
       <div class="action-row">
-        <button class="save-btn" [disabled]="isSaving" (click)="createOrder()">{{ isSaving ? 'Saving...' : 'Bill & Payment' }}</button>
-        <button class="print-btn" [disabled]="isSaving" (click)="createOrder()">Bill & Print</button>
+        <button class="save-btn" [disabled]="isSaving" (click)="saveOrder()">{{ isSaving ? 'Saving...' : (editingOrderId ? 'Update Order' : 'Bill & Payment') }}</button>
+        <button class="print-btn" [disabled]="isSaving" (click)="saveOrder()">{{ editingOrderId ? 'Update & Print' : 'Bill & Print' }}</button>
       </div>
 
       <p class="success" *ngIf="saveSuccess">{{ saveSuccess }}</p>
