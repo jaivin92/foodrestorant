@@ -35,10 +35,12 @@ export class OrderDeskComponent implements OnInit {
 
   tableId: number | null = null;
   notes = '';
+  diningType = 'Dine In';
   isSaving = false;
   saveError = '';
   saveSuccess = '';
   activeOrders: OrderModel[] = [];
+  isOrderPanelOpen = false;
 
   private readonly cart = new Map<number, CartLine>();
 
@@ -65,6 +67,7 @@ export class OrderDeskComponent implements OnInit {
   }
 
   addItem(food: FoodModel): void {
+    this.isOrderPanelOpen = true;
     const line = this.cart.get(food.Id!!);
     if (line) {
       line.quantity += 1;
@@ -83,6 +86,14 @@ export class OrderDeskComponent implements OnInit {
     }
 
     line.quantity = qty;
+  }
+
+  removeItem(foodId: number): void {
+    this.cart.delete(foodId);
+  }
+
+  toggleOrderPanel(forceState?: boolean): void {
+    this.isOrderPanelOpen = typeof forceState === 'boolean' ? forceState : !this.isOrderPanelOpen;
   }
 
   createOrder(): void {
