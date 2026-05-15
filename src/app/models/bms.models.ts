@@ -100,10 +100,14 @@ export interface FoodTableModel extends BaseModel {
 
 export interface OrderModel extends BaseModel {
   UserId: number;
+  CustomerId?: number | null;
+  CustomerName?: string | null;
+  FoodTableId?: number | null;
   OrderStatus?: OrderStatusEnum;
   OrderType?: OrderTypeEnum;
   OrderDate: string;
   Notes?: string | null;
+  OrderItemModels?: OrderItemModel[];
 }
 
 export interface OrderItemModel extends BaseModel {

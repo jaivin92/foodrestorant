@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { finalize, forkJoin, of, switchMap } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
-import { FoodApiService, FoodCategoryApiService, OrderApiService, OrderItemApiService } from 'src/app/core/api';
+import { FoodApiService, FoodCategoryApiService, OrderApiService } from 'src/app/core/api';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
 
@@ -24,7 +24,6 @@ export class OrderDeskComponent implements OnInit {
   private readonly foodApi = inject(FoodApiService);
   private readonly categoryApi = inject(FoodCategoryApiService);
   private readonly orderApi = inject(OrderApiService);
-  private readonly orderItemApi = inject(OrderItemApiService);
   private readonly authService = inject(AuthService);
 
   readonly datatable = new DataTableRequest({ filterObj: { IsActive: true } });
@@ -122,47 +121,40 @@ export class OrderDeskComponent implements OnInit {
       Id: 0,
       IsActive: true,
       UserId: user.id,
-      OrderStatus: OrderStatusEnum.Pending,
+      OrderStatus: OrderStatusEnum.Accepted,
       OrderType: this.orderTypeValue,
       OrderDate: new Date().toISOString(),
       Notes: this.orderNotes || null,
+      FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+      CustomerId: 0,
+      CustomerName: this.orderCustomerName,
+      OrderItemModels: this.cartLines.map((line) => ({
+        Id: 0,
+        IsActive: true,
+        OrderId: 0,
+        FoodId: line.food.Id,
+        Quantity: line.quantity,
+        FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+        OrderStatus: OrderStatusEnum.Accepted,
+        Notes: line.notes || null,
+      })),
     };
 
     this.isSaving = true;
 
     this.orderApi
       .insert(orderPayload)
-      .pipe(
-        switchMap((response) => {
-          if (!response.Status || !response.Data?.Id) {
-            throw new Error(response.Message || 'Unable to create order.');
-          }
-
-          const orderId = response.Data.Id;
-          const itemRequests = this.cartLines.map((line) => {
-            const item: OrderItemModel = {
-              Id: 0,
-              IsActive: true,
-              OrderId: orderId,
-              FoodId: line.food.Id,
-              Quantity: line.quantity,
-              FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
-              OrderStatus: 1,
-              Notes: line.notes || null,
-            };
-
-            return this.orderItemApi.insert(item);
-          });
-
-          return itemRequests.length ? forkJoin(itemRequests).pipe(switchMap(() => of(orderId))) : of(orderId);
-        }),
-        finalize(() => {
-          this.isSaving = false;
-          this.cdr.detectChanges();
-        }),
-      )
+      .pipe(finalize(() => {
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      }))
       .subscribe({
-        next: (orderId) => {
+        next: (response) => {
+          if (!response.Status || !response.Data?.Id) {
+            this.saveError = response.Message || 'Unable to create order.';
+            return;
+          }
+          const orderId = response.Data.Id;
           this.saveSuccess = `Order #${orderId} saved successfully. Total ₹${this.totalAmount}.`;
           this.cart.clear();
           this.notes = '';
@@ -190,6 +182,11 @@ export class OrderDeskComponent implements OnInit {
   get orderNotes(): string {
     const values = [this.customerName?.trim(), this.notes?.trim()].filter(Boolean);
     return values.join(' | ');
+  }
+
+  get orderCustomerName(): string {
+    if (this.customerName?.trim()) return this.customerName.trim();
+    return this.isDineIn && this.tableId ? `Table ${this.tableId}` : '';
   }
 
   private loadActiveOrders(): void {
