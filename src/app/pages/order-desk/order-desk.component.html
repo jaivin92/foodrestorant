@@ -36,15 +36,16 @@
 
     <div class="cart-panel" *ngIf="isOrderPanelOpen">
       <h2>Order Form</h2>
-      <input type="text" placeholder="Search in existing" [(ngModel)]="notes" />
+      <input type="text" placeholder="Customer Name (optional)" [(ngModel)]="customerName" />
+      <input type="text" placeholder="Order notes (optional)" [(ngModel)]="notes" />
 
       <div class="order-meta">
         <select [(ngModel)]="diningType">
-          <option value="Dine In">Select Dining</option>
-          <option value="Dine In">Dine In</option>
-          <option value="Take Away">Take Away</option>
+          <option value="DineIn">Dine In</option>
+          <option value="TakeAway">Take Away</option>
+          <option value="Delivery">Delivery</option>
         </select>
-        <input type="number" min="1" [(ngModel)]="tableId" placeholder="Select Table" />
+        <input type="number" min="1" [(ngModel)]="tableId" [placeholder]="isDineIn ? 'Select Table (required)' : 'Select Table (optional)'" />
       </div>
 
       <div *ngIf="cartLines.length; else emptyState" class="cart-lines">
@@ -52,6 +53,7 @@
           <div>
             <strong>{{ line.food.Name }}</strong>
             <small>₹{{ line.food.Price }} x {{ line.quantity }} = ₹{{ line.food.Price * line.quantity }}</small>
+            <input type="text" placeholder="Item notes (optional)" [(ngModel)]="line.notes" />
           </div>
           <div class="qty">
             <button (click)="changeQty(line.food.Id!!, line.quantity - 1)">-</button>

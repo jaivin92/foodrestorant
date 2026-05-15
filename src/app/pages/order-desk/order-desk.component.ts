@@ -10,6 +10,7 @@ import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderMo
 interface CartLine {
   food: FoodModel;
   quantity: number;
+  notes: string;
 }
 
 @Component({
@@ -34,8 +35,9 @@ export class OrderDeskComponent implements OnInit {
   selectedCategoryId: number | null = null;
 
   tableId: number | null = null;
+  customerName = '';
   notes = '';
-  diningType = 'Dine In';
+  diningType: 'DineIn' | 'TakeAway' | 'Delivery' = 'DineIn';
   isSaving = false;
   saveError = '';
   saveSuccess = '';
@@ -72,7 +74,7 @@ export class OrderDeskComponent implements OnInit {
     if (line) {
       line.quantity += 1;
     } else {
-      this.cart.set(food.Id!!, { food, quantity: 1 });
+          this.cart.set(food.Id!!, { food, quantity: 1, notes: '' });
     }
   }
 
@@ -100,7 +102,7 @@ export class OrderDeskComponent implements OnInit {
     this.saveError = '';
     this.saveSuccess = '';
 
-    if (!this.tableId || this.tableId <= 0) {
+    if (this.isDineIn && (!this.tableId || this.tableId <= 0)) {
       this.saveError = 'Table Id is required.';
       return;
     }
@@ -121,9 +123,9 @@ export class OrderDeskComponent implements OnInit {
       IsActive: true,
       UserId: user.id,
       OrderStatus: OrderStatusEnum.Pending,
-      OrderType: OrderTypeEnum.DineIn,
+      OrderType: this.orderTypeValue,
       OrderDate: new Date().toISOString(),
-      Notes: this.notes || null,
+      Notes: this.orderNotes || null,
     };
 
     this.isSaving = true;
@@ -144,9 +146,9 @@ export class OrderDeskComponent implements OnInit {
               OrderId: orderId,
               FoodId: line.food.Id,
               Quantity: line.quantity,
-              FoodTableId: this.tableId as number,
+              FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
               OrderStatus: 1,
-              Notes: null,
+              Notes: line.notes || null,
             };
 
             return this.orderItemApi.insert(item);
@@ -164,6 +166,8 @@ export class OrderDeskComponent implements OnInit {
           this.saveSuccess = `Order #${orderId} saved successfully. Total ₹${this.totalAmount}.`;
           this.cart.clear();
           this.notes = '';
+          this.customerName = '';
+          this.diningType = 'DineIn';
           this.tableId = null;
           this.loadActiveOrders();
         },
@@ -171,6 +175,21 @@ export class OrderDeskComponent implements OnInit {
           this.saveError = err.message || 'Failed to save order.';
         },
       });
+  }
+
+  get isDineIn(): boolean {
+    return this.diningType === 'DineIn';
+  }
+
+  get orderTypeValue(): OrderTypeEnum {
+    if (this.diningType === 'TakeAway') return OrderTypeEnum.TakeAway;
+    if (this.diningType === 'Delivery') return OrderTypeEnum.Delivery;
+    return OrderTypeEnum.DineIn;
+  }
+
+  get orderNotes(): string {
+    const values = [this.customerName?.trim(), this.notes?.trim()].filter(Boolean);
+    return values.join(' | ');
   }
 
   private loadActiveOrders(): void {
