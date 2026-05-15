@@ -5,12 +5,12 @@
 </section>
 
 <section class="bill-grid">
-  @for (bill of bills; track bill.order) {
-    <app-card>
-      <p class="meta">{{ bill.status }}</p>
-      <h2>{{ bill.table }} • {{ bill.order }}</h2>
-      <strong>{{ bill.amount }}</strong>
-      <app-button variant="secondary">Settle bill</app-button>
-    </app-card>
-  }
+  <p class="error" *ngIf="saveError">{{ saveError }}</p>
+
+  <app-card *ngFor="let order of activeOrders">
+      <p class="meta">Payment pending</p>
+      <h2>Order #{{ order.Id }}</h2>
+      <strong>{{ order.OrderDate | date : 'medium' }}</strong>
+      <app-button variant="secondary" (clicked)="settleBill(order)">Settle bill</app-button>
+  </app-card>
 </section>
