@@ -29,6 +29,12 @@ export enum OrderStatusEnum {
   Cancelled = 7
 }
 
+export enum OrderItemStatusEnum {
+   Preparing = 1,
+   Served = 2,
+   Parcel = 3,
+}
+
 
 export enum OrderTypeEnum {
   DineIn = 1,
@@ -100,10 +106,14 @@ export interface FoodTableModel extends BaseModel {
 
 export interface OrderModel extends BaseModel {
   UserId: number;
+  CustomerId?: number | null;
+  CustomerName?: string | null;
+  FoodTableId?: number | null;
   OrderStatus?: OrderStatusEnum;
   OrderType?: OrderTypeEnum;
   OrderDate: string;
   Notes?: string | null;
+  OrderItemModels?: OrderItemModel[];
 }
 
 export interface OrderItemModel extends BaseModel {

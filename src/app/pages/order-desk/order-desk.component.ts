@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { finalize, forkJoin, of, switchMap } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
-import { FoodApiService, FoodCategoryApiService, OrderApiService, OrderItemApiService } from 'src/app/core/api';
+import { FoodApiService, FoodCategoryApiService, OrderApiService } from 'src/app/core/api';
 import { AuthService } from 'src/app/core/auth/auth.service';
-import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
+import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderItemStatusEnum, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
 
 interface CartLine {
   food: FoodModel;
   quantity: number;
+  notes: string;
 }
 
 @Component({
@@ -23,7 +24,6 @@ export class OrderDeskComponent implements OnInit {
   private readonly foodApi = inject(FoodApiService);
   private readonly categoryApi = inject(FoodCategoryApiService);
   private readonly orderApi = inject(OrderApiService);
-  private readonly orderItemApi = inject(OrderItemApiService);
   private readonly authService = inject(AuthService);
 
   readonly datatable = new DataTableRequest({ filterObj: { IsActive: true } });
@@ -34,8 +34,9 @@ export class OrderDeskComponent implements OnInit {
   selectedCategoryId: number | null = null;
 
   tableId: number | null = null;
+  customerName = '';
   notes = '';
-  diningType = 'Dine In';
+  diningType: 'DineIn' | 'TakeAway' | 'Delivery' = 'DineIn';
   isSaving = false;
   saveError = '';
   saveSuccess = '';
@@ -61,6 +62,10 @@ export class OrderDeskComponent implements OnInit {
     return this.cartLines.reduce((sum, line) => sum + line.food.Price * line.quantity, 0);
   }
 
+  get occupiedTableOrders(): OrderModel[] {
+    return this.activeOrders.filter((order) => typeof order.FoodTableId === 'number' && order.FoodTableId > 0);
+  }
+
   setCategory(categoryId: number | null): void {
     this.selectedCategoryId = categoryId;
     this.groupProducts();
@@ -72,7 +77,7 @@ export class OrderDeskComponent implements OnInit {
     if (line) {
       line.quantity += 1;
     } else {
-      this.cart.set(food.Id!!, { food, quantity: 1 });
+      this.cart.set(food.Id!!, { food, quantity: 1, notes: '' });
     }
   }
 
@@ -96,11 +101,24 @@ export class OrderDeskComponent implements OnInit {
     this.isOrderPanelOpen = typeof forceState === 'boolean' ? forceState : !this.isOrderPanelOpen;
   }
 
+  openOccupiedTable(order: OrderModel): void {
+    if (!order.FoodTableId || order.FoodTableId <= 0) {
+      return;
+    }
+
+    this.isOrderPanelOpen = true;
+    this.diningType = 'DineIn';
+    this.tableId = order.FoodTableId;
+    this.customerName = order.CustomerName ?? '';
+    this.saveError = '';
+    this.saveSuccess = '';
+  }
+
   createOrder(): void {
     this.saveError = '';
     this.saveSuccess = '';
 
-    if (!this.tableId || this.tableId <= 0) {
+    if (this.isDineIn && (!this.tableId || this.tableId <= 0)) {
       this.saveError = 'Table Id is required.';
       return;
     }
@@ -120,50 +138,45 @@ export class OrderDeskComponent implements OnInit {
       Id: 0,
       IsActive: true,
       UserId: user.id,
-      OrderStatus: OrderStatusEnum.Pending,
-      OrderType: OrderTypeEnum.DineIn,
+      OrderStatus: OrderStatusEnum.Accepted,
+      OrderType: this.orderTypeValue,
       OrderDate: new Date().toISOString(),
-      Notes: this.notes || null,
+      Notes: this.orderNotes || null,
+      FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+      CustomerId: 0,
+      CustomerName: this.orderCustomerName,
+      OrderItemModels: this.cartLines.map((line) => ({
+        Id: 0,
+        IsActive: true,
+        OrderId: 0,
+        FoodId: line.food.Id,
+        Quantity: line.quantity,
+        FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+        OrderItemStatus: OrderItemStatusEnum.Preparing,
+        Notes: line.notes || null,
+      })),
     };
 
     this.isSaving = true;
 
     this.orderApi
       .insert(orderPayload)
-      .pipe(
-        switchMap((response) => {
-          if (!response.Status || !response.Data?.Id) {
-            throw new Error(response.Message || 'Unable to create order.');
-          }
-
-          const orderId = response.Data.Id;
-          const itemRequests = this.cartLines.map((line) => {
-            const item: OrderItemModel = {
-              Id: 0,
-              IsActive: true,
-              OrderId: orderId,
-              FoodId: line.food.Id,
-              Quantity: line.quantity,
-              FoodTableId: this.tableId as number,
-              OrderStatus: 1,
-              Notes: null,
-            };
-
-            return this.orderItemApi.insert(item);
-          });
-
-          return itemRequests.length ? forkJoin(itemRequests).pipe(switchMap(() => of(orderId))) : of(orderId);
-        }),
-        finalize(() => {
-          this.isSaving = false;
-          this.cdr.detectChanges();
-        }),
-      )
+      .pipe(finalize(() => {
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      }))
       .subscribe({
-        next: (orderId) => {
+        next: (response) => {
+          if (!response.Status || !response.Data?.Id) {
+            this.saveError = response.Message || 'Unable to create order.';
+            return;
+          }
+          const orderId = response.Data.Id;
           this.saveSuccess = `Order #${orderId} saved successfully. Total ₹${this.totalAmount}.`;
           this.cart.clear();
           this.notes = '';
+          this.customerName = '';
+          this.diningType = 'DineIn';
           this.tableId = null;
           this.loadActiveOrders();
         },
@@ -173,8 +186,28 @@ export class OrderDeskComponent implements OnInit {
       });
   }
 
+  get isDineIn(): boolean {
+    return this.diningType === 'DineIn';
+  }
+
+  get orderTypeValue(): OrderTypeEnum {
+    if (this.diningType === 'TakeAway') return OrderTypeEnum.TakeAway;
+    if (this.diningType === 'Delivery') return OrderTypeEnum.Delivery;
+    return OrderTypeEnum.DineIn;
+  }
+
+  get orderNotes(): string {
+    const values = [this.customerName?.trim(), this.notes?.trim()].filter(Boolean);
+    return values.join(' | ');
+  }
+
+  get orderCustomerName(): string {
+    if (this.customerName?.trim()) return this.customerName.trim();
+    return this.isDineIn && this.tableId ? `Table ${this.tableId}` : '';
+  }
+
   private loadActiveOrders(): void {
-    const request = new DataTableRequest({ filterObj: { IsActive: true, OrderStatus :OrderStatusEnum.Accepted, OrderType :OrderTypeEnum.DineIn }, orderDir: 'desc' });
+    const request = new DataTableRequest({ filterObj: { IsActive: true, OrderStatus: OrderStatusEnum.Accepted, OrderType: OrderTypeEnum.DineIn }, orderDir: 'desc' });
     this.orderApi.getAll(request).subscribe((response) => {
       if (response.Status) {
         this.activeOrders = response.Data.Data;
