@@ -11,6 +11,12 @@
   </button>
 </section>
 
+<section class="category-filter" *ngIf="activeOrders.length">
+  <button type="button" *ngFor="let order of activeOrders" (click)="openOccupiedOrder(order)">
+    Occupied Table {{ order.FoodTableId }}
+  </button>
+</section>
+
 <section class="order-layout">
   <div class="order-products">
     <section *ngFor="let group of groupedFoods" class="category-block">

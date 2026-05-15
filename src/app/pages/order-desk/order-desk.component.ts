@@ -72,6 +72,20 @@ export class OrderDeskComponent implements OnInit {
     this.isOrderPanelOpen = true;
     const line = this.cart.get(food.Id!!);
     if (line) {
+  openOccupiedOrder(order: OrderModel): void {
+    if (!order.FoodTableId) {
+      this.saveError = 'Selected order does not have a table.';
+      return;
+    }
+
+    this.isOrderPanelOpen = true;
+    this.diningType = 'DineIn';
+    this.tableId = order.FoodTableId;
+    this.customerName = order.CustomerName || '';
+    this.saveError = '';
+    this.saveSuccess = `Opened table ${order.FoodTableId}. Add new items and save order.`;
+  }
+
       line.quantity += 1;
     } else {
           this.cart.set(food.Id!!, { food, quantity: 1, notes: '' });
