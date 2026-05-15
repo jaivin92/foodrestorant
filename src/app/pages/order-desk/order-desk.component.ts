@@ -12,6 +12,7 @@ interface CartLine {
   quantity: number;
   notes: string;
   isExistingItem?: boolean;
+  originalQuantity?: number;
 }
 
 @Component({
@@ -165,9 +166,9 @@ export class OrderDeskComponent implements OnInit {
       CustomerId: 0,
       CustomerName: this.orderCustomerName,
       OrderItemModels: this.cartLines.map((line) => ({
-        Id: line.isExistingItem ? 1 : 0,
+        Id: 0,
         IsActive: true,
-        OrderId: 0,
+        OrderId: this.editingOrderId ?? 0,
         FoodId: line.food.Id,
         Quantity: line.quantity,
         FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
@@ -176,12 +177,39 @@ export class OrderDeskComponent implements OnInit {
       })),
     };
 
+    const newItemsForUpdate = this.cartLines
+      .map((line) => {
+        const previousQty = line.originalQuantity ?? 0;
+        const addQty = line.isExistingItem ? Math.max(line.quantity - previousQty, 0) : line.quantity;
+
+        if (addQty <= 0) {
+          return null;
+        }
+
+        return {
+          Id: 0,
+          IsActive: true,
+          OrderId: this.editingOrderId ?? 0,
+          FoodId: line.food.Id,
+          Quantity: addQty,
+          FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+          OrderItemStatus: OrderItemStatusEnum.Preparing,
+          Notes: line.notes || null,
+        };
+      })
+      .filter((line): line is NonNullable<typeof line> => !!line);
+
+    if (this.editingOrderId && !newItemsForUpdate.length) {
+      this.saveError = 'Increase quantity or add new item to update order.';
+      return;
+    }
+
     this.isSaving = true;
 
     const saveRequest$ = this.editingOrderId
       ? this.orderApi.update({
           ...orderPayload,
-          OrderItemModels: orderPayload.OrderItemModels?.filter((line) => !line.Id || line.Id === 0) ?? [],
+          OrderItemModels: newItemsForUpdate,
         })
       : this.orderApi.insert(orderPayload);
 
@@ -297,6 +325,7 @@ export class OrderDeskComponent implements OnInit {
         quantity: item.Quantity,
         notes: item.Notes ?? '',
         isExistingItem: true,
+        originalQuantity: item.Quantity,
       });
     }
   }
