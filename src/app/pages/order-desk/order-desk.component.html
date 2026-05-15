@@ -11,10 +11,19 @@
   </button>
 </section>
 
-<section class="category-filter" *ngIf="activeOrders.length">
-  <button type="button" *ngFor="let order of activeOrders" (click)="openOccupiedOrder(order)">
-    Occupied Table {{ order.FoodTableId }}
-  </button>
+<section class="category-filter" *ngIf="occupiedTableOrders.length">
+  <p class="eyebrow">Occupied tables</p>
+  <div class="food-grid">
+    <article class="food-card" *ngFor="let order of occupiedTableOrders">
+      <div>
+        <h3>Table {{ order.FoodTableId }}</h3>
+        <p>Order #{{ order.Id }} · {{ order.OrderDate | date : 'short' }}</p>
+      </div>
+      <div class="food-actions">
+        <button type="button" (click)="openOccupiedTable(order)">Open order</button>
+      </div>
+    </article>
+  </div>
 </section>
 
 <section class="order-layout">

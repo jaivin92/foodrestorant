@@ -37,11 +37,14 @@ export class OrderDeskComponent implements OnInit {
   tableId: number | null = null;
   customerName = '';
   notes = '';
-  diningType: 'DineIn' | 'TakeAway' | 'Delivery' = 'DineIn';
-  isSaving = false;
-  saveError = '';
-  saveSuccess = '';
-  activeOrders: OrderModel[] = [];
+  get occupiedTableOrders(): OrderModel[] {
+    return this.activeOrders.filter((order) => typeof order.FoodTableId === 'number' && order.FoodTableId > 0);
+  }
+
+  openOccupiedTable(order: OrderModel): void {
+    if (!order.FoodTableId || order.FoodTableId <= 0) {
+    this.customerName = order.CustomerName ?? '';
+    this.saveSuccess = '';
   isOrderPanelOpen = false;
 
   private readonly cart = new Map<number, CartLine>();
