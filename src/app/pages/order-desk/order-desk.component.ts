@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize, forkJoin } from 'rxjs';
 
-import { FoodApiService, FoodCategoryApiService, OrderApiService } from 'src/app/core/api';
+import { FoodApiService, FoodCategoryApiService, OrderApiService, OrderItemApiService } from 'src/app/core/api';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { DataTableRequest, FoodCategoryModel, FoodModel, OrderItemModel, OrderItemStatusEnum, OrderModel, OrderStatus, OrderStatusEnum, OrderTypeEnum } from 'src/app/models';
 
@@ -24,6 +24,7 @@ export class OrderDeskComponent implements OnInit {
   private readonly foodApi = inject(FoodApiService);
   private readonly categoryApi = inject(FoodCategoryApiService);
   private readonly orderApi = inject(OrderApiService);
+  private readonly orderItemApi = inject(OrderItemApiService);
   private readonly authService = inject(AuthService);
 
   readonly datatable = new DataTableRequest({ filterObj: { IsActive: true } });
@@ -36,11 +37,14 @@ export class OrderDeskComponent implements OnInit {
   tableId: number | null = null;
   customerName = '';
   notes = '';
-  diningType: 'DineIn' | 'TakeAway' | 'Delivery' = 'DineIn';
-  isSaving = false;
-  saveError = '';
-  saveSuccess = '';
-  activeOrders: OrderModel[] = [];
+  get occupiedTableOrders(): OrderModel[] {
+    return this.activeOrders.filter((order) => typeof order.FoodTableId === 'number' && order.FoodTableId > 0);
+  }
+
+  openOccupiedTable(order: OrderModel): void {
+    if (!order.FoodTableId || order.FoodTableId <= 0) {
+    this.customerName = order.CustomerName ?? '';
+    this.saveSuccess = '';
   isOrderPanelOpen = false;
 
   private readonly cart = new Map<number, CartLine>();
@@ -71,6 +75,20 @@ export class OrderDeskComponent implements OnInit {
     this.isOrderPanelOpen = true;
     const line = this.cart.get(food.Id!!);
     if (line) {
+  openOccupiedOrder(order: OrderModel): void {
+    if (!order.FoodTableId) {
+      this.saveError = 'Selected order does not have a table.';
+      return;
+    }
+
+    this.isOrderPanelOpen = true;
+    this.diningType = 'DineIn';
+    this.tableId = order.FoodTableId;
+    this.customerName = order.CustomerName || '';
+    this.saveError = '';
+    this.saveSuccess = `Opened table ${order.FoodTableId}. Add new items and save order.`;
+  }
+
       line.quantity += 1;
     } else {
           this.cart.set(food.Id!!, { food, quantity: 1, notes: '' });
@@ -114,6 +132,15 @@ export class OrderDeskComponent implements OnInit {
     const user = this.authService.user();
     if (!user) {
       this.saveError = 'Please login first.';
+      return;
+    }
+
+    const existingOrder = this.isDineIn
+      ? this.activeOrders.find((order) => order.FoodTableId === this.tableId)
+      : undefined;
+
+    if (existingOrder?.Id) {
+      this.appendItemsToOrder(existingOrder.Id);
       return;
     }
 
@@ -165,6 +192,41 @@ export class OrderDeskComponent implements OnInit {
         },
         error: (err: Error) => {
           this.saveError = err.message || 'Failed to save order.';
+        },
+      });
+  }
+
+
+  private appendItemsToOrder(orderId: number): void {
+    const itemPayloads: OrderItemModel[] = this.cartLines.map((line) => ({
+      Id: 0,
+      IsActive: true,
+      OrderId: orderId,
+      FoodId: line.food.Id,
+      Quantity: line.quantity,
+      FoodTableId: this.isDineIn ? (this.tableId as number) : 0,
+      OrderStatus: OrderStatusEnum.Preparing,
+      Notes: line.notes || null,
+    }));
+
+    this.isSaving = true;
+
+    forkJoin(itemPayloads.map((item) => this.orderItemApi.insert(item)))
+      .pipe(finalize(() => {
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.saveSuccess = `Added ${this.totalQty} item(s) to order #${orderId}.`;
+          this.cart.clear();
+          this.notes = '';
+          this.customerName = '';
+          this.tableId = null;
+          this.loadActiveOrders();
+        },
+        error: (err: Error) => {
+          this.saveError = err.message || 'Failed to update order items.';
         },
       });
   }
