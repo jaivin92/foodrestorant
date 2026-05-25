@@ -1,5 +1,24 @@
 # Restaurant POS UI System (Material 3 + Jetpack Compose)
 
+## Delivered App Flow
+
+1. Dynamic Splash Screen (shimmer)
+2. Intro Slider
+3. Staff Login (Waiter / Cook)
+4. Dashboard
+   - Product Categories
+   - Products
+   - Tables
+   - Add/Update order table-wise
+5. Kitchen queue for cook
+
+## Role-based Session Rules
+
+- Only **staff users** can access ordering flow.
+- **Waiter role**: table selection + add/update order.
+- **Cook role**: kitchen queue and status handling.
+- Session state controls default landing tab and role badges.
+
 ## Theme
 
 - Primary: `#FF5A36`
@@ -22,41 +41,13 @@
 - Normal Text: `14-16sp`
 - Small Label: `12sp`
 
-## Spacing
+## Spacing / Radius / Buttons
 
-- Small gap: `8dp`
-- Medium gap: `16dp`
-- Large gap: `24dp`
-- Screen padding: `20dp`
+- Spacing: 8dp / 16dp / 24dp / 20dp screen padding
+- Radius: Button 12dp, Card 16dp, Bottom Sheet 24dp, Input 12dp
+- Primary button height: 52dp
 
-## Corner radius
+## References Used
 
-- Button: `12dp`
-- Card: `16dp`
-- Bottom sheet: `24dp`
-- Input box: `12dp`
-
-## Components
-
-Implemented in `app/src/main/java/com/foodrestorant/ui/` as reusable Compose widgets:
-
-- App buttons (`PrimaryButton`, `SecondaryButton`, `IconLabelButton`)
-- Cards (`AppCard`, `StatusChip`, `InfoRow`)
-- Inputs (`AppTextField`, `SearchField`)
-- Navigation (`RestaurantBottomNav`, `FabAction`)
-- Loaders (`ShimmerPlaceholder`, `LoadingCard`)
-
-## Screens
-
-Implemented sample screens:
-
-- Login
-- Dashboard
-- Table Selection
-- Order Taking
-- Kitchen Queue
-- Bill Payment
-- Order History
-
-All screens use one-hand-friendly controls, large touch targets, card-first layout,
-and Material 3 design conventions.
+- API reference: `https://github.com/jaivin92/bmsapi`
+- Web app reference: `https://github.com/jaivin92/foodrestorant/tree/development`
