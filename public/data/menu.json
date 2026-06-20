@@ -1,0 +1,20 @@
+{
+  "restaurant": "Food Restorant",
+  "items": [
+    {
+      "name": "Garden Breakfast Bowl",
+      "price": 12.5,
+      "category": "breakfast"
+    },
+    {
+      "name": "Roasted Tomato Pasta",
+      "price": 16,
+      "category": "main"
+    },
+    {
+      "name": "Citrus Mint Cooler",
+      "price": 5.5,
+      "category": "drinks"
+    }
+  ]
+}
